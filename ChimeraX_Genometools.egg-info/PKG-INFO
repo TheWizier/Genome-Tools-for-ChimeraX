@@ -1,0 +1,46 @@
+Metadata-Version: 1.2
+Name: ChimeraX-Genometools
+Version: 0.1
+Summary: Tool for analysis of 3D genome models
+Home-page: https://www.rbvi.ucsf.edu/chimerax/
+Author: William Hofsøy
+Author-email: 2wswer@gmail.com
+License: UNKNOWN
+Description: Work in progress ChimeraX bundle.
+        
+        Implements command "hello" to print the string "hello world" in the log.
+Platform: UNKNOWN
+Classifier: Framework :: ChimeraX
+Classifier: Intended Audience :: Science/Research
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Scientific/Engineering :: Visualization
+Classifier: Topic :: Scientific/Engineering :: Chemistry
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
+Classifier: Development Status :: 3 - Alpha
+Classifier: License :: Freeware
+Classifier: Environment :: MacOS X :: Aqua
+Classifier: Environment :: Win32 (MS Windows)
+Classifier: Environment :: X11 Applications
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: Microsoft :: Windows :: Windows 10
+Classifier: Operating System :: POSIX :: Linux
+Classifier: ChimeraX :: Bundle :: General :: 1,1 :: chimerax.genometools ::  :: 
+Classifier: ChimeraX :: Command :: genometools_highlight :: Genome Tools ::
+      Make model transparent and highlight selection
+Classifier: ChimeraX :: Command :: genometools_visualise_bed :: Genome Tools ::
+      Open a BED file and display on model
+Classifier: ChimeraX :: Command :: genometools_inspect_beads :: Genome Tools ::
+      Get the Chromosome data of selection
+Classifier: ChimeraX :: Command :: genometools_select_chromosome :: Genome Tools ::
+      Add a chromosome to selection
+Classifier: ChimeraX :: Command :: genometools_make_submodels :: Genome Tools ::
+      Make submodels for each chromosome
+Classifier: ChimeraX :: Command :: genometools_make_model_from_selection :: Genome Tools ::
+      Make a new model from selection keeping the same bead ids
+Classifier: ChimeraX :: Command :: genometools_enable_saving_extra_attributes :: Genome Tools ::
+      Enable saving of the extra attributes from cmm files in sessions
+Classifier: ChimeraX :: Tool :: BED Models ::
+      Genome Tools :: Graphical interface for creating models from .bed files
+Classifier: ChimeraX :: Tool :: Bead Overlap ::
+      Genome Tools :: Graphical interface for creating models from overlapping models
+Requires-Python: >=3.7

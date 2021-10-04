@@ -1,0 +1,84 @@
+<!--
+ChimeraX bundle names must start with "ChimeraX-"
+to avoid clashes with package names in pypi.python.org.
+When uploaded to the ChimeraX toolshed, the bundle
+will be displayed without the ChimeraX- prefix.
+-->
+
+<BundleInfo name="ChimeraX-Genometools"
+	    version="0.1" package="chimerax.genometools"
+  	    minSessionVersion="1" maxSessionVersion="1">
+
+  <!-- Additional information about bundle source  TODO change to me? -->
+  <Author>William Hofsøy</Author>
+  <Email>2wswer@gmail.com</Email>
+  <URL>https://www.rbvi.ucsf.edu/chimerax/</URL>
+
+  <!-- Synopsis is a one-line description
+       Description is a full multi-line description TODO give description-->
+  <Synopsis>Tool for analysis of 3D genome models</Synopsis>
+  <Description>Work in progress ChimeraX bundle.
+
+Implements command "hello" to print the string "hello world" in the log.
+  </Description>
+
+  <!-- Categories is a list where this bundle should appear -->
+  <Categories>
+    <Category name="General"/>
+  </Categories>
+
+  <!-- Dependencies on other ChimeraX/Python packages -->
+  <Dependencies>
+    <Dependency name="ChimeraX-Core" version="~=1.1"/>
+    <Dependency name="ChimeraX-UI" version="~=1.0"/>
+  </Dependencies>
+
+
+  <!-- Python and ChimeraX-specific classifiers
+       From https://pypi.python.org/pypi?%3Aaction=list_classifiers
+       Some Python classifiers are always inserted by the build process.
+       These include the Environment and Operating System classifiers
+       as well as:
+         Framework :: ChimeraX
+         Intended Audience :: Science/Research
+         Programming Language :: Python :: 3
+         Topic :: Scientific/Engineering :: Visualization
+         Topic :: Scientific/Engineering :: Chemistry
+         Topic :: Scientific/Engineering :: Bio-Informatics
+       The "ChimeraX :: Bundle" classifier is also supplied automatically.  -->
+  <Classifiers>
+    <!-- Development Status should be compatible with bundle version number -->
+    <PythonClassifier>Development Status :: 3 - Alpha</PythonClassifier>
+    <PythonClassifier>License :: Freeware</PythonClassifier>
+    <!-- ChimeraX classifiers describe supplied functionality -->
+    <ChimeraXClassifier>ChimeraX :: Command :: genometools_highlight :: Genome Tools ::
+      Make model transparent and highlight selection</ChimeraXClassifier>
+
+    <ChimeraXClassifier>ChimeraX :: Command :: genometools_visualise_bed :: Genome Tools ::
+      Open a BED file and display on model</ChimeraXClassifier>
+
+    <ChimeraXClassifier>ChimeraX :: Command :: genometools_inspect_beads :: Genome Tools ::
+      Get the Chromosome data of selection</ChimeraXClassifier>
+
+    <ChimeraXClassifier>ChimeraX :: Command :: genometools_select_chromosome :: Genome Tools ::
+      Add a chromosome to selection</ChimeraXClassifier>
+
+    <ChimeraXClassifier>ChimeraX :: Command :: genometools_make_submodels :: Genome Tools ::
+      Make submodels for each chromosome</ChimeraXClassifier>
+
+    <ChimeraXClassifier>ChimeraX :: Command :: genometools_make_model_from_selection :: Genome Tools ::
+      Make a new model from selection keeping the same bead ids</ChimeraXClassifier>
+
+    <ChimeraXClassifier>ChimeraX :: Command :: genometools_enable_saving_extra_attributes :: Genome Tools ::
+      Enable saving of the extra attributes from cmm files in sessions</ChimeraXClassifier>
+
+    <!-- Register a graphical interface tool -->
+    <ChimeraXClassifier>ChimeraX :: Tool :: BED Models ::
+      Genome Tools :: Graphical interface for creating models from .bed files</ChimeraXClassifier>
+
+    <ChimeraXClassifier>ChimeraX :: Tool :: Bead Overlap ::
+      Genome Tools :: Graphical interface for creating models from overlapping models</ChimeraXClassifier>
+
+  </Classifiers>
+
+</BundleInfo>
