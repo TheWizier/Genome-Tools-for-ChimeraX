@@ -197,7 +197,7 @@ def cut_bead(session, bead, pos, keep_original=False):  # TODO keep here or move
 
 
 def bead_select_2(items, bead_list, select_mode):
-    if(select_mode == BedSelectMode.RANGE):
+    if(select_mode == BedSelectMode.RANGE):  # TODO This isn't working as it should
         start_index = None
         for bead_index in range(len(bead_list)):
             if(int(items[1]) < bead_list[bead_index].bead_end):
@@ -263,9 +263,12 @@ def bead_select(items, bead_start, bead_end, select_mode):
 #     bead_end = int(bead_info[2])
 
 def all_atoms_in(model):
-    if(hasattr(model, "atoms")):
+    try:
+    #if(hasattr(model, "atoms")):
         for atom in model.atoms:
             yield atom
+    except AttributeError:
+        pass
     for m in model.child_models():
         yield from all_atoms_in(m)
 
@@ -319,90 +322,80 @@ def make_bed_model(session,  # TODO session not used
 
     # Find the matching beads
 
-    # TODO TEST NEW CODE
-    # selection = []
-    # for key in marker_set.bead_dict:
-    #     if(key.startswith(items[0])):
-    #         selection.append(bead_select_2(items, marker_set.bead_dict[key], select_mode))
-    # for m in selection:
-    #     pass
+    selection = []
+    for key in marker_set.bead_dict:
+        if(key.startswith(items[0])):
+            selection.extend(bead_select_2(items, marker_set.bead_dict[key], select_mode))
 
-    for m in all_atoms_in(marker_set):
-        ea = m.marker_extra_attributes
-        bead_start = m.bead_start
-        bead_end = m.bead_end
-        bead_id = m.residue.number  # TODO useful?
-        # Currently we are colouring both A and B and others. from inclusive to exclusive
-        # TODO be able to specify a or b chromosome
-        if (ea["chrID"].startswith(items[0]) and bead_select(items, bead_start, bead_end, select_mode)):
-            # Determine what to do if we have seen this marker already
-            if(m in marker_seen):
-                if(colour_mode == BedColourMode.SINGLE):
-                    continue
-
-                if(colour_blend):
-                    # Apply blend colour
-                    for bead in new_model.atoms:
-                        if (bead.residue.number == m.residue.number):
-                            if(colour_mode == BedColourMode.SCORE):
-                                rgba = get_score_based_colour(score_mode,
-                                                              items,
-                                                              start_percentile,
-                                                              end_percentile,
-                                                              gradient_start,
-                                                              gradient_end,
-                                                              gradient_colour_1,
-                                                              gradient_colour_2)
-
-                            else:
-                                r, g, b = items[8].split(",")
-                                rgba = np.array([int(r), int(g), int(b), 255], dtype=np.ubyte)
-
-                            m_index = marker_seen.index(m)
-                            blend_factor = blend_factors[m_index]
-                            bead.color = get_colour_between(bead.color, rgba, 1/(blend_factor+1))
-                            blend_factors[m_index] += 1
-
-                else:
-                    # Apply conflict colour
-                    for bead in new_model.atoms:
-                        if (bead.residue.number == m.residue.number):
-                            bead.color = conflict_colour.uint8x4()
-                            break
+    for m in selection:
+        if(m in marker_seen):
+            if(colour_mode == BedColourMode.SINGLE):
                 continue
 
-            marker_seen.append(m)
             if(colour_blend):
-                blend_factors.append(1)  # This relies on the lists being "in sync"
+                # Apply blend colour
+                for bead in new_model.atoms:
+                    if (bead.residue.number == m.residue.number):
+                        if(colour_mode == BedColourMode.SCORE):
+                            rgba = get_score_based_colour(score_mode,
+                                                          items,
+                                                          start_percentile,
+                                                          end_percentile,
+                                                          gradient_start,
+                                                          gradient_end,
+                                                          gradient_colour_1,
+                                                          gradient_colour_2)
 
-            # Hide beads on main model
-            if(hide_org):
-                m.display = False  # Use display instead of hide attribute because that is what other tools use
+                        else:
+                            r, g, b = items[8].split(",")
+                            rgba = np.array([int(r), int(g), int(b), 255], dtype=np.ubyte)
 
-            # Decide bead colour
-            if (colour_mode == BedColourMode.SINGLE):
-                rgba = colour.uint8x4()
-
-            elif (colour_mode == BedColourMode.SCORE):
-                rgba = get_score_based_colour(score_mode,
-                           items,
-                           start_percentile,
-                           end_percentile,
-                           gradient_start,
-                           gradient_end,
-                           gradient_colour_1,
-                           gradient_colour_2)
-
-            elif (colour_mode == BedColourMode.COLOUR):
-                r, g, b = items[8].split(",")
-                rgba = np.array([int(r), int(g), int(b), 255], dtype=np.ubyte)
+                        m_index = marker_seen.index(m)
+                        blend_factor = blend_factors[m_index]
+                        bead.color = get_colour_between(bead.color, rgba, 1/(blend_factor+1))
+                        blend_factors[m_index] += 1
+                        break
 
             else:
-                print("Invalid colour mode")
-                return  # TODO exception?
+                # Apply conflict colour
+                for bead in new_model.atoms:
+                    if (bead.residue.number == m.residue.number):
+                        bead.color = conflict_colour.uint8x4()
+                        break
+            continue
 
-            # Make new bead
-            new_model.create_marker(m.scene_coord, rgba, m.radius, bead_id)
+        marker_seen.append(m)
+        if(colour_blend):
+            blend_factors.append(1)  # This relies on the lists being "in sync"
+
+        # Hide beads on main model
+        if(hide_org):
+            m.display = False  # Use display instead of hide attribute because that is what other tools use
+
+        # Decide bead colour
+        if (colour_mode == BedColourMode.SINGLE):
+            rgba = colour.uint8x4()
+
+        elif (colour_mode == BedColourMode.SCORE):
+            rgba = get_score_based_colour(score_mode,
+                       items,
+                       start_percentile,
+                       end_percentile,
+                       gradient_start,
+                       gradient_end,
+                       gradient_colour_1,
+                       gradient_colour_2)
+
+        elif (colour_mode == BedColourMode.COLOUR):
+            r, g, b = items[8].split(",")
+            rgba = np.array([int(r), int(g), int(b), 255], dtype=np.ubyte)
+
+        else:
+            print("Invalid colour mode")
+            return  # TODO exception?
+
+        # Make new bead
+        new_model.create_marker(m.scene_coord, rgba, m.radius, m.residue.number)
 
 
 def numbered_naming(existing_name, new_name):
