@@ -10,6 +10,11 @@ from chimerax.markers import MarkerSet
 from .OverlapRule import OverlapRule
 from .tool import BedColourMode, BedSelectMode
 from chimerax.core.commands import all_objects
+
+import line_profiler
+
+prof = line_profiler.LineProfiler()
+
 import re
 
 import numpy as np
@@ -202,14 +207,17 @@ def bead_select_2(items, bead_list, select_mode):
         for bead_index in range(len(bead_list)):
             if(int(items[1]) < bead_list[bead_index].bead_end):
                 start_index = bead_index
+                break
         if start_index is None:
             return []
         end_index = None
         for bead_index in range(start_index, len(bead_list)):
             if(int(items[2]) < bead_list[bead_index].bead_end):
                 end_index = bead_index
+                break
         if end_index is None:
             end_index = len(bead_list)-1
+
         return bead_list[start_index:(end_index + 1)]
 
     if(select_mode == BedSelectMode.RANGE_STRICT):
@@ -217,12 +225,14 @@ def bead_select_2(items, bead_list, select_mode):
         for bead_index in range(len(bead_list)):
             if (int(items[1]) < bead_list[bead_index].bead_start):
                 start_index = bead_index
+                break
         if start_index is None:
             return []
         end_index = None
         for bead_index in range(start_index, len(bead_list)):
             if (int(items[2]) < bead_list[bead_index].bead_end):
                 end_index = bead_index-1
+                break
         if end_index is None:
             end_index = len(bead_list) - 1
         return bead_list[start_index:(end_index + 1)]
@@ -296,6 +306,7 @@ def get_score_based_colour(score_mode,
     return get_colour_between(gradient_colour_1.uint8x4(), gradient_colour_2.uint8x4(), colour_percent)
 
 
+@prof
 def make_bed_model(session,  # TODO session not used
                    new_model,
                    items,
@@ -307,7 +318,6 @@ def make_bed_model(session,  # TODO session not used
                    marker_seen,
                    colour_blend,
                    marker_set,
-                   blend_factors,
                    gradient_colour_1,
                    gradient_colour_2,
                    score_mode,
@@ -317,7 +327,6 @@ def make_bed_model(session,  # TODO session not used
                    end_percentile
                    ):
 
-
     # Find all markers in the range from the BED file line
 
     # Find the matching beads
@@ -326,56 +335,40 @@ def make_bed_model(session,  # TODO session not used
     for key in marker_set.bead_dict:
         if(key.startswith(items[0])):
             selection.extend(bead_select_2(items, marker_set.bead_dict[key], select_mode))
+
     for m in selection:
-
-
-    # for m in all_atoms_in(marker_set):
-    #     ea = m.marker_extra_attributes
-    #     bead_start = m.bead_start
-    #     bead_end = m.bead_end
-    #     # Currently we are colouring both A and B and others. from inclusive to exclusive
-    #     # TODO be able to specify a or b chromosome
-    #     if (ea["chrID"].startswith(items[0]) and bead_select(items, bead_start, bead_end, select_mode)):
-    #         # Determine what to do if we have seen this marker already
         if(m in marker_seen):
             if(colour_mode == BedColourMode.SINGLE):
                 continue
 
+            bead = marker_seen[m][0]
             if(colour_blend):
                 # Apply blend colour
-                for bead in new_model.atoms:
-                    if (bead.residue.number == m.residue.number):
-                        if(colour_mode == BedColourMode.SCORE):
-                            rgba = get_score_based_colour(score_mode,
-                                                          items,
-                                                          start_percentile,
-                                                          end_percentile,
-                                                          gradient_start,
-                                                          gradient_end,
-                                                          gradient_colour_1,
-                                                          gradient_colour_2)
 
-                        else:
-                            r, g, b = items[8].split(",")
-                            rgba = np.array([int(r), int(g), int(b), 255], dtype=np.ubyte)
+                # Get blend factor
+                blend_factor = marker_seen[m][1]
 
-                        m_index = marker_seen.index(m)
-                        blend_factor = blend_factors[m_index]
-                        bead.color = get_colour_between(bead.color, rgba, 1/(blend_factor+1))
-                        blend_factors[m_index] += 1
-                        break
+                if(colour_mode == BedColourMode.SCORE):
+                    rgba = get_score_based_colour(score_mode,
+                                                  items,
+                                                  start_percentile,
+                                                  end_percentile,
+                                                  gradient_start,
+                                                  gradient_end,
+                                                  gradient_colour_1,
+                                                  gradient_colour_2)
+
+                else:
+                    r, g, b = items[8].split(",")
+                    rgba = np.array([int(r), int(g), int(b), 255], dtype=np.ubyte)
+
+                bead.color = get_colour_between(bead.color, rgba, 1/(blend_factor+1))
+                # Update blend factor:
+                marker_seen[m][1] += 1
 
             else:
                 # Apply conflict colour
-                for bead in new_model.atoms:
-                    if (bead.residue.number == m.residue.number):
-                        bead.color = conflict_colour.uint8x4()
-                        break
-            continue
-
-        marker_seen.append(m)
-        if(colour_blend):
-            blend_factors.append(1)  # This relies on the lists being "in sync"
+                bead.color = conflict_colour.uint8x4()
 
         # Hide beads on main model
         if(hide_org):
@@ -404,7 +397,10 @@ def make_bed_model(session,  # TODO session not used
             return  # TODO exception?
 
         # Make new bead
-        new_model.create_marker(m.scene_coord, rgba, m.radius, m.residue.number)
+        new_marker = new_model.create_marker(m.scene_coord, rgba, m.radius, m.residue.number)
+        # Add marker as seen
+        marker_seen[m] = [new_marker, 1]
+
 
 
 def numbered_naming(existing_name, new_name):
@@ -521,8 +517,8 @@ def visualise_bed(session,
 
         new_model = MarkerSet(session)
         new_model.name = new_model_name
-        marker_seen = []
-        blend_factors = []
+        marker_seen = {}  # TODO Dict orig marker as key, new marker and blend factors as value?
+        # blend_factors = []
         while(True):
             items = line.strip().split()
             # print("len(items):", len(items))
@@ -537,6 +533,8 @@ def visualise_bed(session,
             if(colour_mode == BedColourMode.SCORE and len(items) < 5):
                 raise UserError("Failed to colour by score as score data was missing in one or more lines in the file")
 
+
+
             make_bed_model(session,
                            new_model,
                            items,
@@ -548,7 +546,6 @@ def visualise_bed(session,
                            marker_seen,
                            colour_blend,
                            marker_set,
-                           blend_factors,
                            gradient_colour_1,
                            gradient_colour_2,
                            score_mode,
@@ -561,6 +558,11 @@ def visualise_bed(session,
             if(line == ""):  # EOF reached
                 break
         session.models.add([new_model])
+
+        # TODO REMOVE
+        newfile = open("newfile.txt", mode='w')
+        prof.print_stats(newfile)
+        newfile.close()
 
 
 visualise_bed_desc = CmdDesc(required=[("bed_file", OpenFileNameArg)],
