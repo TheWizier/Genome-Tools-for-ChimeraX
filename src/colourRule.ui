@@ -20,6 +20,50 @@
    <property name="bottomMargin">
     <number>1</number>
    </property>
+   <item row="0" column="5">
+    <widget class="QToolButton" name="downButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="arrowType">
+      <enum>Qt::DownArrow</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="action">
+     <item>
+      <property name="text">
+       <string>Colour</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Don't include</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLineEdit" name="modelIDs">
+     <property name="toolTip">
+      <string>Comma separated model IDs or names in double quotes. Empty field will select all models.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="6">
+    <widget class="QToolButton" name="removeRule">
+     <property name="toolTip">
+      <string>Remove rule</string>
+     </property>
+     <property name="text">
+      <string>-</string>
+     </property>
+     <property name="arrowType">
+      <enum>Qt::NoArrow</enum>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="4">
     <widget class="QToolButton" name="upButton">
      <property name="text">
@@ -30,13 +74,10 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="5">
-    <widget class="QToolButton" name="downButton">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="arrowType">
-      <enum>Qt::DownArrow</enum>
+   <item row="0" column="3">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
     </widget>
    </item>
@@ -70,51 +111,10 @@
       <string/>
      </property>
      <property name="styleSheet">
-      <string notr="true"/>
+      <string notr="true">font: 72pt &quot;Arial&quot;;</string>
      </property>
      <property name="text">
-      <string>n</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QComboBox" name="action">
-     <item>
-      <property name="text">
-       <string>Colour</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Don't include</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="0" column="3">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLineEdit" name="modelIDs">
-     <property name="toolTip">
-      <string>Comma separated model IDs or names in double quotes. Empty field will select all models.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="6">
-    <widget class="QToolButton" name="removeRule">
-     <property name="toolTip">
-      <string>Remove rule</string>
-     </property>
-     <property name="text">
-      <string>-</string>
-     </property>
-     <property name="arrowType">
-      <enum>Qt::NoArrow</enum>
+      <string>▮</string>
      </property>
     </widget>
    </item>

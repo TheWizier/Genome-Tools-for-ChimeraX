@@ -1,22 +1,13 @@
 # vim: set expandtab shiftwidth=4 softtabstop=4:
 
-from enum import IntEnum
 from typing import List
 
-from PyQt5 import QtCore
 from PyQt5.QtCore import QRegExp
-from PyQt5.QtGui import QRegExpValidator, QColor, QIntValidator, QDoubleValidator
+from PyQt5.QtGui import QRegExpValidator, QColor, QDoubleValidator
 
-from chimerax.core.colors import Color
 from chimerax.core.tools import ToolInstance
-
-
-class BedSelectMode(IntEnum):
-    RANGE, RANGE_STRICT, START, MIDDLE, END = range(5)
-
-
-class BedColourMode(IntEnum):
-    SINGLE, SCORE, COLOUR = range(3)
+from . import distanceTool
+from .enums import BedColourMode
 
 
 class GenometoolsBedModels(ToolInstance):
@@ -35,13 +26,13 @@ class GenometoolsBedModels(ToolInstance):
                                 # Let ChimeraX know about our help page
 
     def __init__(self, session, tool_name):
-        self.score_field_values = ["0", "1000", "0", "100"]
-
         # 'session'   - chimerax.core.session.Session instance
         # 'tool_name' - string
 
         # Initialize base class.
         super().__init__(session, tool_name)
+
+        self.score_field_values = ["0", "1000", "0", "100"]
 
         # Set name displayed on title bar (defaults to tool_name)
         # Must be after the superclass init, which would override it.
@@ -77,15 +68,19 @@ class GenometoolsBedModels(ToolInstance):
         self.bf.setupUi(self.tool_window.ui_area)
 
         # Set radio button group ids
-        self.bf.colourButtonGroup.setId(self.bf.radioSingleColor, 0)
-        self.bf.colourButtonGroup.setId(self.bf.radioScoreColor, 1)
-        self.bf.colourButtonGroup.setId(self.bf.radioColorColor, 2)
+        # self.bf.colourButtonGroup.setId(self.bf.radioSingleColor, 0)
+        # self.bf.colourButtonGroup.setId(self.bf.radioScoreColor, 1)
+        # self.bf.colourButtonGroup.setId(self.bf.radioColorColor, 2)
+        #
+        # self.bf.beadSelectionModeGroup.setId(self.bf.radioInRange, 0)
+        # self.bf.beadSelectionModeGroup.setId(self.bf.radioInRangeStrict, 1)
+        # self.bf.beadSelectionModeGroup.setId(self.bf.radioStart, 2)
+        # self.bf.beadSelectionModeGroup.setId(self.bf.radioMiddle, 3)
+        # self.bf.beadSelectionModeGroup.setId(self.bf.radioEnd, 4)
 
-        self.bf.beadSelectionModeGroup.setId(self.bf.radioInRange, 0)
-        self.bf.beadSelectionModeGroup.setId(self.bf.radioInRangeStrict, 1)
-        self.bf.beadSelectionModeGroup.setId(self.bf.radioStart, 2)
-        self.bf.beadSelectionModeGroup.setId(self.bf.radioMiddle, 3)
-        self.bf.beadSelectionModeGroup.setId(self.bf.radioEnd, 4)
+        # Hide context options
+        self.bf.scoreColourWidget.setVisible(False)
+        self.bf.fileColourWidget.setVisible(False)
 
         # Set default colours
         self.bf.colorPickerStartGradient.set_color(QColor(255, 255, 255))
@@ -93,21 +88,20 @@ class GenometoolsBedModels(ToolInstance):
         self.bf.conflictColorPicker.set_color(QColor(255, 0, 0))
         self.bf.conflictColorPicker_2.set_color(QColor(255, 0, 0))
 
-        # self.int_only_validator = QIntValidator()
+        # Set validators
         self.double_only_validator = QDoubleValidator()
         self.bf.startGradient.setValidator(self.double_only_validator)
         self.bf.endGradient.setValidator(self.double_only_validator)
 
-        self.bf.mainModelId.setValidator(QRegExpValidator(QRegExp("[0-9]*"), self.bf.mainModelId))
+        self.bf.mainModelId.setValidator(QRegExpValidator(QRegExp("[0-9.]*"), self.bf.mainModelId))
 
+        # Connect functions
         self.bf.generateModelButton.clicked.connect(self.generate_model_from_bed)
 
         self.bf.scoreOrPercentile.currentIndexChanged[int].connect(self.score_field_update)
 
+        # Set filetypes for browse widget
         self.bf.browseWidget.set_file_types("BED-files (*.bed *.bed3 *.bed4 *.bed5 *.bed6 *.bed7 *.bed8 *.bed9 *.bed10 *.bed11 *.bed12);;All files (*.*)")
-        # from . import testForm
-        # tf = testForm.Ui_Form()
-        # tf.setupUi(self.tool_window.ui_area)
 
         # Show the window on the user-preferred side of the ChimeraX
         # main window
@@ -266,3 +260,33 @@ class OverlapTool(ToolInstance):  # TODO maybe add help button for information o
         self.bof.scrollAreaWidgetContentsLayout.removeWidget(rule)
         self.bof.scrollAreaWidgetContentsLayout.insertWidget(index + 1, rule)
         self.colour_rules[index + 1], self.colour_rules[index] = self.colour_rules[index], self.colour_rules[index + 1]
+
+
+class DistanceTool(ToolInstance):
+
+    def __init__(self, session, tool_name):
+        super().__init__(session, tool_name)
+        self.display_name = "GenomeTools Distances"
+
+        from chimerax.ui import MainToolWindow
+        self.tool_window = MainToolWindow(self)
+        self._build_ui()
+
+    def _build_ui(self):
+        from . import distances
+        self.df = distances.Ui_Form()
+        self.df.setupUi(self.tool_window.ui_area)
+        self.tool_window.manage('side')
+        self.df.calculatePairwiseButton.clicked.connect(self.calculate_pairwise)
+        self.df.calculateBetweenButton.clicked.connect(self.calculate_between)
+        self.df.calculatePointButton.clicked.connect(self.calculate_point)
+
+    def calculate_pairwise(self):
+        distanceTool.calculate_pairwise(self.session)
+
+    def calculate_between(self):
+        distanceTool.calculate_between(self.session)
+
+    def calculate_point(self):
+        distanceTool.calculate_point(self.session)
+

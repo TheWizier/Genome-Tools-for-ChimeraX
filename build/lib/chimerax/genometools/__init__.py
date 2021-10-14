@@ -29,6 +29,9 @@ class _MyAPI(BundleAPI):
         elif ti.name == "Bead Overlap":
             from . import tool
             return tool.OverlapTool(session, ti.name)
+        elif ti.name == "Genome Distances":
+            from . import tool
+            return tool.DistanceTool(session, ti.name)
         raise ValueError("trying to start unknown tool: %s" % ti.name)
 
     @staticmethod

@@ -79,6 +79,9 @@ Implements command "hello" to print the string "hello world" in the log.
     <ChimeraXClassifier>ChimeraX :: Tool :: Bead Overlap ::
       Genome Tools :: Graphical interface for creating models from overlapping models</ChimeraXClassifier>
 
+    <ChimeraXClassifier>ChimeraX :: Tool :: Genome Distances ::
+      Genome Tools :: Graphical interface for calculating distances</ChimeraXClassifier>
+
   </Classifiers>
 
 </BundleInfo>

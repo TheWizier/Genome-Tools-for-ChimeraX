@@ -1,5 +1,4 @@
 # vim: set expandtab shiftwidth=4 softtabstop=4:
-import time
 from typing import List, Dict
 
 from chimerax.atomic import selected_atoms
@@ -8,12 +7,13 @@ from chimerax.core.commands import CmdDesc, OpenFileNameArg, StringArg, IntArg, 
 from chimerax.core.errors import UserError
 from chimerax.markers import MarkerSet
 from .OverlapRule import OverlapRule
-from .tool import BedColourMode, BedSelectMode
-from chimerax.core.commands import all_objects
+from .enums import BedColourMode, BedSelectMode
 
-import line_profiler
+# import line_profiler
 
-prof = line_profiler.LineProfiler()
+from .util import get_model_by_id
+
+# prof = line_profiler.LineProfiler()
 
 import re
 
@@ -22,9 +22,6 @@ import numpy as np
 def select_chromosome(session, chr_id):  # Superseded by make_submodels but no reason to remove it
     from chimerax.core.commands import all_objects
     atoms = all_objects(session).atoms
-    from chimerax.std_commands.select import select_add
-    from chimerax.core.commands import ObjectsArg
-    #text = ":"
     count = 0
     for m in atoms:
         ea = getattr(m, 'marker_extra_attributes', {})
@@ -32,10 +29,6 @@ def select_chromosome(session, chr_id):  # Superseded by make_submodels but no r
             m.selected = True
             count += 1
     session.logger.info("Selected " + str(count) + " markers")
-            #text += str(m.residue.number) + ","
-    #text = text[:-1]
-    #selected, tmp1, tmp2 = ObjectsArg.parse(text, session)
-    #select_add(session, selected)
 
 
 select_chromosome_desc = CmdDesc(required=[("chr_id", StringArg)])
@@ -51,154 +44,147 @@ def inspect_beads(session):
 inspect_beads_desc = CmdDesc()
 
 
-def norm_vector(v):  # TODO check that it works and maybe move elsewhere
-    norm = np.linalg.norm(v)
-    if norm == 0:
-        return v
-    return v / norm
-
-
 # TODO NB this is not used and code is outdated:
-def cut_bead(session, bead, pos, keep_original=False):  # TODO keep here or move to different file?
-    '''
-    Split a bead into two new beads while retaining selection and making new bonds.
-    The cut is done before the pos index.
-    :returns: The two new beads
-    '''
-
-    # for var in dir(bead):
-    #     print(var, ":")
-    #     try:
-    #         print(eval("bead." + var))
-    #     except NameError:
-    #         pass
-
-    # TODO Now adding min size change if neccesary
-    minimum_radius = 0.002
-    link_to_marker_ratio = 0.25
-
-    if(len(bead.neighbors) > 2 or len(bead.neighbors) < 1):
-        print("Invalid number of neighbours for bead in cut_bead:", len(bead.neighbors))
-        return None  # TODO or just throw error?
-
-    beadID = re.split(":|-", bead.marker_extra_attributes["beadID"])
-    bead_start = int(beadID[1])
-    bead_end = int(beadID[2])
-
-    # Find radius of new beads
-    print("bead_start:", bead_start, "bead_end:", bead_end)
-    print("pos:", pos, "bead.radius:", bead.radius)
-    print(((pos - bead_start) / (bead_end - bead_start)))
-    print(((bead_end - pos) / (bead_end - bead_start)))  # TODO fix math so radii add up?
-    bead1_radius = ((pos - bead_start) / (bead_end - bead_start)) * bead.radius
-    bead2_radius = ((bead_end - pos) / (bead_end - bead_start)) * bead.radius
-    print("bead1_radius:", bead1_radius)
-    print("bead2_radius:", bead2_radius)
-
-    neighbor_a = bead.neighbors[0]
-    neighbor_b = bead.neighbors[1]
-    neighbor_a_id = re.split(":|-", bead.neighbors[0].marker_extra_attributes["beadID"])
-    neighbor_a_start = int(neighbor_a_id[1])
-
-    # Calculate vector to place beads on
-    vector = None
-    neighbor_first = False
-    string_edge = False
-    if(len(bead.neighbors) == 1):
-        string_edge = True
-        # We are at the end of the string of beads
-        if(neighbor_a_start < bead_start):
-            # neighbour is first -> Vector should point away from neighbour
-            vector = bead.scene_coord - neighbor_a.scene_coord
-            neighbor_first = True
-        else:
-            # neighbour is last -> Vector should point towards neighbour
-            vector = neighbor_a.scene_coord - bead.scene_coord
-
-    else:
-        # We are not at the end of a string of beads
-        if (neighbor_a_start < bead_start):
-            # neighbour_a is first -> Vector should point away from neighbour_a
-            vector = neighbor_b.scene_coord - neighbor_a.scene_coord
-            neighbor_first = True
-        else:
-            # neighbour_a is last -> Vector should point towards neighbour_a
-            vector = neighbor_a.scene_coord - neighbor_b.scene_coord
-
-    # Calculate coordinates of new beads
-    bead_edge = bead.scene_coord - norm_vector(vector) * bead.radius
-    bead1_coord = bead_edge + norm_vector(vector) * bead1_radius
-    bead2_coord = bead_edge + norm_vector(vector) * 2 * bead1_radius + norm_vector(vector) * bead2_radius
-
-
-    from chimerax.markers import MarkerSet
-    from chimerax.markers import create_link
-    marker_sets = session.models.list(type=MarkerSet)
-    m = marker_sets[0]  # TODO this assumes that we are always working on the first one
-
-    if(keep_original):
-        m1 = m.create_marker(bead1_coord, bead.color, max(bead1_radius, minimum_radius))
-    else:
-        m1 = bead  # TODO change size of bonds to neighbors
-        bead.scene_coord = bead1_coord
-        bead.radius = max(bead1_radius, minimum_radius)
-    m2 = m.create_marker(bead2_coord, bead.color, max(bead2_radius, minimum_radius))
-
-    link_radius = max(min(bead1_radius, bead2_radius), minimum_radius) * link_to_marker_ratio
-
-    if(string_edge):
-        if(neighbor_first):
-            if(keep_original):
-                create_link(neighbor_a, m1, bead.color, link_radius)
-            else:
-                for b in m1.bonds:
-                    if(b.other_atom(m1) == neighbor_b):
-                        b.delete()
-                        print("REM BOND")
-
-        else:
-            create_link(m2, neighbor_a, bead.color, link_radius)
-            if (not keep_original):
-                for b in m1.bonds:
-                    if(b.other_atom(m1) == neighbor_a):
-                        b.delete()
-                        print("REM BOND")
-    else:
-        if (neighbor_first):
-            create_link(m2, neighbor_b, bead.color, link_radius)
-            if(keep_original):
-                create_link(neighbor_a, m1, bead.color, link_radius)
-            else:
-                for b in m1.bonds:
-                    if(b.other_atom(m1) == neighbor_b):
-                        b.delete()
-                        print("REM BOND")
-
-        else:
-            create_link(m2, neighbor_a, bead.color, link_radius)
-            if(keep_original):
-                create_link(neighbor_b, m1, bead.color, link_radius)
-            else:
-                for b in m1.bonds:
-                    if(b.other_atom(m1) == neighbor_a):
-                        b.delete()
-                        print("REM BOND")
-    create_link(m1, m2, bead.color, link_radius)
-
-
-    # Set extra_marker_attributes
-    m1.marker_extra_attributes = {"chrID": bead.marker_extra_attributes["chrID"],
-                                  "beadID": beadID[0] + ":" + str(bead_start) + "-" + str(pos)}
-    m2.marker_extra_attributes = {"chrID": bead.marker_extra_attributes["chrID"],
-                                  "beadID": beadID[0] + ":" + str(pos) + "-" + str(bead_end)}
-    # Delete old bead  # We change the original to be part of the split instead since deletion breaks indexing
-    # if(not keep_original):
-    #     for b in bead.bonds:
-    #         b.delete()
-    #     bead.delete()
-    # TODO preserve selection option
-
-    return m1, m2
+# def cut_bead(session, bead, pos, keep_original=False):  # TODO keep here or move to different file?
+#     '''
+#     Split a bead into two new beads while retaining selection and making new bonds.
+#     The cut is done before the pos index.
+#     :returns: The two new beads
+#     '''
+#
+#     # for var in dir(bead):
+#     #     print(var, ":")
+#     #     try:
+#     #         print(eval("bead." + var))
+#     #     except NameError:
+#     #         pass
+#
+#     # TODO Now adding min size change if neccesary
+#     minimum_radius = 0.002
+#     link_to_marker_ratio = 0.25
+#
+#     if(len(bead.neighbors) > 2 or len(bead.neighbors) < 1):
+#         print("Invalid number of neighbours for bead in cut_bead:", len(bead.neighbors))
+#         return None  # TODO or just throw error?
+#
+#     beadID = re.split(":|-", bead.marker_extra_attributes["beadID"])
+#     bead_start = int(beadID[1])
+#     bead_end = int(beadID[2])
+#
+#     # Find radius of new beads
+#     print("bead_start:", bead_start, "bead_end:", bead_end)
+#     print("pos:", pos, "bead.radius:", bead.radius)
+#     print(((pos - bead_start) / (bead_end - bead_start)))
+#     print(((bead_end - pos) / (bead_end - bead_start)))  # TODO fix math so radii add up?
+#     bead1_radius = ((pos - bead_start) / (bead_end - bead_start)) * bead.radius
+#     bead2_radius = ((bead_end - pos) / (bead_end - bead_start)) * bead.radius
+#     print("bead1_radius:", bead1_radius)
+#     print("bead2_radius:", bead2_radius)
+#
+#     neighbor_a = bead.neighbors[0]
+#     neighbor_b = bead.neighbors[1]
+#     neighbor_a_id = re.split(":|-", bead.neighbors[0].marker_extra_attributes["beadID"])
+#     neighbor_a_start = int(neighbor_a_id[1])
+#
+#     # Calculate vector to place beads on
+#     vector = None
+#     neighbor_first = False
+#     string_edge = False
+#     if(len(bead.neighbors) == 1):
+#         string_edge = True
+#         # We are at the end of the string of beads
+#         if(neighbor_a_start < bead_start):
+#             # neighbour is first -> Vector should point away from neighbour
+#             vector = bead.scene_coord - neighbor_a.scene_coord
+#             neighbor_first = True
+#         else:
+#             # neighbour is last -> Vector should point towards neighbour
+#             vector = neighbor_a.scene_coord - bead.scene_coord
+#
+#     else:
+#         # We are not at the end of a string of beads
+#         if (neighbor_a_start < bead_start):
+#             # neighbour_a is first -> Vector should point away from neighbour_a
+#             vector = neighbor_b.scene_coord - neighbor_a.scene_coord
+#             neighbor_first = True
+#         else:
+#             # neighbour_a is last -> Vector should point towards neighbour_a
+#             vector = neighbor_a.scene_coord - neighbor_b.scene_coord
+#
+#     # Calculate coordinates of new beads
+#     bead_edge = bead.scene_coord - norm_vector(vector) * bead.radius
+#     bead1_coord = bead_edge + norm_vector(vector) * bead1_radius
+#     bead2_coord = bead_edge + norm_vector(vector) * 2 * bead1_radius + norm_vector(vector) * bead2_radius
+#
+#
+#     from chimerax.markers import MarkerSet
+#     from chimerax.markers import create_link
+#     marker_sets = session.models.list(type=MarkerSet)
+#     m = marker_sets[0]  # TODO this assumes that we are always working on the first one
+#
+#     if(keep_original):
+#         m1 = m.create_marker(bead1_coord, bead.color, max(bead1_radius, minimum_radius))
+#     else:
+#         m1 = bead  # TODO change size of bonds to neighbors
+#         bead.scene_coord = bead1_coord
+#         bead.radius = max(bead1_radius, minimum_radius)
+#     m2 = m.create_marker(bead2_coord, bead.color, max(bead2_radius, minimum_radius))
+#
+#     link_radius = max(min(bead1_radius, bead2_radius), minimum_radius) * link_to_marker_ratio
+#
+#     if(string_edge):
+#         if(neighbor_first):
+#             if(keep_original):
+#                 create_link(neighbor_a, m1, bead.color, link_radius)
+#             else:
+#                 for b in m1.bonds:
+#                     if(b.other_atom(m1) == neighbor_b):
+#                         b.delete()
+#                         print("REM BOND")
+#
+#         else:
+#             create_link(m2, neighbor_a, bead.color, link_radius)
+#             if (not keep_original):
+#                 for b in m1.bonds:
+#                     if(b.other_atom(m1) == neighbor_a):
+#                         b.delete()
+#                         print("REM BOND")
+#     else:
+#         if (neighbor_first):
+#             create_link(m2, neighbor_b, bead.color, link_radius)
+#             if(keep_original):
+#                 create_link(neighbor_a, m1, bead.color, link_radius)
+#             else:
+#                 for b in m1.bonds:
+#                     if(b.other_atom(m1) == neighbor_b):
+#                         b.delete()
+#                         print("REM BOND")
+#
+#         else:
+#             create_link(m2, neighbor_a, bead.color, link_radius)
+#             if(keep_original):
+#                 create_link(neighbor_b, m1, bead.color, link_radius)
+#             else:
+#                 for b in m1.bonds:
+#                     if(b.other_atom(m1) == neighbor_a):
+#                         b.delete()
+#                         print("REM BOND")
+#     create_link(m1, m2, bead.color, link_radius)
+#
+#
+#     # Set extra_marker_attributes
+#     m1.marker_extra_attributes = {"chrID": bead.marker_extra_attributes["chrID"],
+#                                   "beadID": beadID[0] + ":" + str(bead_start) + "-" + str(pos)}
+#     m2.marker_extra_attributes = {"chrID": bead.marker_extra_attributes["chrID"],
+#                                   "beadID": beadID[0] + ":" + str(pos) + "-" + str(bead_end)}
+#     # Delete old bead  # We change the original to be part of the split instead since deletion breaks indexing
+#     # if(not keep_original):
+#     #     for b in bead.bonds:
+#     #         b.delete()
+#     #     bead.delete()
+#     # TODO preserve selection option
+#
+#     return m1, m2
 
 
 def bead_select_2(items, bead_list, select_mode):
@@ -253,18 +239,18 @@ def bead_select_2(items, bead_list, select_mode):
                 return [bead]
     return []
 
-
-def bead_select(items, bead_start, bead_end, select_mode):
-    if(select_mode == BedSelectMode.RANGE):
-        return int(items[1]) < bead_end and int(items[2]) >= bead_start
-    if(select_mode == BedSelectMode.RANGE_STRICT):
-        return int(items[1]) < bead_start and int(items[2]) >= bead_end
-    if(select_mode == BedSelectMode.START):
-        return bead_start < int(items[1]) < bead_end
-    if (select_mode == BedSelectMode.END):
-        return bead_start < int(items[2]) < bead_end
-    if (select_mode == BedSelectMode.MIDDLE):
-        return bead_start < (int(items[1]) + (int(items[2]) - int(items[1])) / 2) < bead_end
+# # TODO Old unused
+# def bead_select(items, bead_start, bead_end, select_mode):
+#     if(select_mode == BedSelectMode.RANGE):
+#         return int(items[1]) < bead_end and int(items[2]) >= bead_start
+#     if(select_mode == BedSelectMode.RANGE_STRICT):
+#         return int(items[1]) < bead_start and int(items[2]) >= bead_end
+#     if(select_mode == BedSelectMode.START):
+#         return bead_start < int(items[1]) < bead_end
+#     if (select_mode == BedSelectMode.END):
+#         return bead_start < int(items[2]) < bead_end
+#     if (select_mode == BedSelectMode.MIDDLE):
+#         return bead_start < (int(items[1]) + (int(items[2]) - int(items[1])) / 2) < bead_end
 
 # def get_genome_attributes(m): # TODO maybe something like this later
 #     ea = getattr(m, 'marker_extra_attributes', {})
@@ -306,7 +292,7 @@ def get_score_based_colour(score_mode,
     return get_colour_between(gradient_colour_1.uint8x4(), gradient_colour_2.uint8x4(), colour_percent)
 
 
-@prof
+# @prof
 def make_bed_model(session,  # TODO session not used
                    new_model,
                    items,
@@ -559,10 +545,10 @@ def visualise_bed(session,
                 break
         session.models.add([new_model])
 
-        # TODO REMOVE
-        newfile = open("newfile.txt", mode='w')
-        prof.print_stats(newfile)
-        newfile.close()
+        # # TODO REMOVE
+        # newfile = open("newfile.txt", mode='w')
+        # prof.print_stats(newfile)
+        # newfile.close()
 
 
 visualise_bed_desc = CmdDesc(required=[("bed_file", OpenFileNameArg)],
@@ -580,7 +566,6 @@ def highlight(session, transparency: int = 30):
     if(not (0 <= transparency <= 255)):
         raise UserError("Transparency value must be in the range 0-255")
     from chimerax.core.commands import all_objects
-    from chimerax.core.colors import Color
     atoms = all_objects(session).atoms
     bonds = all_objects(session).bonds
 
@@ -654,12 +639,6 @@ def make_model_from_selection(session, new_model_name):
 make_model_from_selection_desc = CmdDesc(required=[("new_model_name", StringArg)])
 
 
-def get_model_by_id(session, model_id):
-    for model in session.models.list():
-        if (model.id_string == model_id):
-            return model
-
-
 # TODO make callable as a command in chimerax OR move to separate file?
 def make_overlap_model(session, overlap_rules: List[OverlapRule], model_name: str):
     # Make a list of all involved beads and what models they are in.
@@ -694,7 +673,7 @@ def make_overlap_model(session, overlap_rules: List[OverlapRule], model_name: st
                 break
     session.models.add([new_model])
 
-
+# TODO Not necessary anymore as has been implemented in ChimeraX by default
 def save_marker_attributes(session, model_id):  # TODO must apply to submodels as well!
     m_sets = session.models.list(type=MarkerSet)
     print(m_sets)

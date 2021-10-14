@@ -16,7 +16,9 @@ class QColourPicker(QPushButton):
         self.update_color()
 
     def update_color(self):
-        self.setStyleSheet("font: 20pt \"Wingdings\";\ncolor: " + self.color.name())
+        # TODO wingdings not working on mac. Detect operating system and switch behaviour?
+        # font: 20pt \"Wingdings\";
+        self.setStyleSheet("font: 72pt \"Areal\";\ncolor: " + self.color.name())
         self.style().unpolish(self)
         self.style().polish(self)
 

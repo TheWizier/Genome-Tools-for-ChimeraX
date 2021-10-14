@@ -43,4 +43,6 @@ Classifier: ChimeraX :: Tool :: BED Models ::
       Genome Tools :: Graphical interface for creating models from .bed files
 Classifier: ChimeraX :: Tool :: Bead Overlap ::
       Genome Tools :: Graphical interface for creating models from overlapping models
+Classifier: ChimeraX :: Tool :: Genome Distances ::
+      Genome Tools :: Graphical interface for calculating distances
 Requires-Python: >=3.7
