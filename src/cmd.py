@@ -593,38 +593,50 @@ def copy_bead(bead, new_model, main_model):
     new_marker.marker_extra_attributes = bead.marker_extra_attributes
     # TODO add other things to be copied if any
 
-def make_submodels(session, main_model_id="1"):
-    # TODO maybe make function for fetching model by id like this
-    main_model = None
-    for model in session.models.list():
-        if (model.id_string == main_model_id):
-            main_model = model
-            break
 
-    if (main_model is None):
-        raise UserError("No model with id: ", main_model_id)
-
+def make_submodels_helper(session, main_model):
     # To split the model into submodels we actually just make an entirely new model and delete the old one
     # so all the atoms must be "copied" to their new models.
     submodels = {}
     from chimerax.core.models import Model
     parent = Model(main_model.name, session)
     parent.id = main_model.id
-    for m in main_model.atoms:
-        ea = getattr(m, 'marker_extra_attributes', {})
-        if (ea["chrID"] in submodels):
-            copy_bead(m, submodels[ea["chrID"]], main_model)
-        else:
-            new_sub = MarkerSet(session, ea["chrID"])
-            submodels[ea["chrID"]] = new_sub
-            copy_bead(m, new_sub, main_model)
-            parent.add([new_sub])
+    try:
+        for m in main_model.atoms:
+            ea = getattr(m, 'marker_extra_attributes', {})
+            if (ea["chrID"] in submodels):
+                copy_bead(m, submodels[ea["chrID"]], main_model)
+            else:
+                new_sub = MarkerSet(session, ea["chrID"])
+                submodels[ea["chrID"]] = new_sub
+                copy_bead(m, new_sub, main_model)
+                parent.add([new_sub])
+    except AttributeError:
+        # Either atoms is missing or extra attributes is missing
+        print("Could not split model:", main_model.name)
+    else:
+        session.models.close([main_model])
+        session.models.add([parent])
 
-    session.models.close([main_model])
-    session.models.add([parent])
+
+def make_submodels(session, main_model_id=None):  # TODO: Fix make_submodel splits on subsequent calls
+    if(main_model_id is None):
+        # Do all models
+        for model in session.models.list():
+            make_submodels_helper(session, model)
+    else:
+        # Do specified model
+        from . import util
+        main_model = util.get_model_by_id(session, main_model_id)
+
+        if (main_model is None):
+            raise UserError("No model with id: ", main_model_id)
+
+        make_submodels_helper(session, main_model)
 
 
-make_submodels_desc = CmdDesc(required=[("main_model_id", StringArg)])
+make_submodels_desc = CmdDesc(optional=[("main_model_id", StringArg)])
+
 
 def make_model_from_selection(session, new_model_name):
     new_model = MarkerSet(session, new_model_name)
@@ -635,6 +647,7 @@ def make_model_from_selection(session, new_model_name):
         seen_ids.append(bead.residue.number)
         new_model.create_marker(bead.scene_coord, bead.color, bead.radius, bead.residue.number)
     session.models.add([new_model])
+
 
 make_model_from_selection_desc = CmdDesc(required=[("new_model_name", StringArg)])
 

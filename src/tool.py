@@ -2,9 +2,18 @@
 
 from typing import List
 
-from PyQt5.QtCore import QRegExp
-from PyQt5.QtGui import QRegExpValidator, QColor, QDoubleValidator
+import numpy as np
+from PyQt5 import QtWidgets
+from matplotlib import pyplot
+from matplotlib.backends.backend_qt5agg import (
+    FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar)
 
+from PyQt5.QtCore import QRegExp
+from PyQt5.QtGui import QRegExpValidator, QColor, QDoubleValidator, QIntValidator
+from PyQt5.QtWidgets import QDialog
+from matplotlib.figure import Figure
+
+from chimerax.core.errors import UserError
 from chimerax.core.tools import ToolInstance
 from . import distanceTool
 from .enums import BedColourMode
@@ -281,9 +290,48 @@ class DistanceTool(ToolInstance):
         self.df.calculateBetweenButton.clicked.connect(self.calculate_between)
         self.df.calculatePointButton.clicked.connect(self.calculate_point)
 
-    def calculate_pairwise(self):
-        distances = distanceTool.calculate_pairwise(self.session)  # TODO take parameters
+        # Set validators
+        self.model_id_validator = QRegExpValidator(QRegExp("[0-9.]*"))
+        self.df.pairwiseModelId.setValidator(self.model_id_validator)
+        self.int_only_validator = QIntValidator()
+        self.df.binCount.setValidator(self.int_only_validator)
+        self.df.cutoffMin.setValidator(self.int_only_validator)
+        self.df.cutoffMax.setValidator(self.int_only_validator)
 
+        # Setup result dialog
+        from . import distanceResults
+        self.result_dialog = QDialog(self.tool_window.ui_area)
+        self.drd = distanceResults.Ui_Dialog()
+        self.drd.setupUi(self.result_dialog)
+        self.drd.textEdit.setReadOnly(True)
+
+        self.verticalLayout_frame_1 = QtWidgets.QVBoxLayout(self.drd.frame)
+        self.verticalLayout_frame_1.setObjectName("verticalLayout_frame_1")
+        self.matplot_canvas = FigureCanvasQTAgg(Figure())
+        self.verticalLayout_frame_1.addWidget(self.matplot_canvas)
+        self.matplot_toolbar = NavigationToolbar(self.matplot_canvas, self.drd.frame)
+        self.verticalLayout_frame_1.addWidget(self.matplot_toolbar)
+
+    def calculate_pairwise(self):
+        distances = distanceTool.calculate_pairwise(self.session, self.df.pairwiseModelId.text())
+        #formatted_distances = ", ".join([str(dist) for dist in distances])  # TODO this crashes chimerax OOM?
+        formatted_distances = str(distances)
+        self.drd.textEdit.setText("Array of " + str(len(distances)) + " distances.\n" + formatted_distances)
+        bin_count = int(self.df.binCount.text())
+        if(self.df.binCount.text() == ""):
+            bin_count = 10
+
+        if(self.df.cutoffCheckBox.isChecked()):
+            if(self.df.cutoffMin.text() == "" or self.df.cutoffMax.text() == ""):
+                raise UserError("Empty cutoff values")
+            cutoff_range = (int(self.df.cutoffMin.text()), int(self.df.cutoffMax.text()))
+        else:
+            cutoff_range = None
+        pyplot.clf()
+        histogram = pyplot.hist(distances, bin_count, cutoff_range)
+        self.matplot_canvas.figure = pyplot.gcf()
+        self.matplot_canvas.draw()
+        self.result_dialog.show()
 
     def calculate_between(self):
         distanceTool.calculate_between(self.session)

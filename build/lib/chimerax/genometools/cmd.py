@@ -9,11 +9,11 @@ from chimerax.markers import MarkerSet
 from .OverlapRule import OverlapRule
 from .enums import BedColourMode, BedSelectMode
 
-import line_profiler
+# import line_profiler
 
 from .util import get_model_by_id
 
-prof = line_profiler.LineProfiler()
+# prof = line_profiler.LineProfiler()
 
 import re
 
@@ -22,7 +22,6 @@ import numpy as np
 def select_chromosome(session, chr_id):  # Superseded by make_submodels but no reason to remove it
     from chimerax.core.commands import all_objects
     atoms = all_objects(session).atoms
-    #text = ":"
     count = 0
     for m in atoms:
         ea = getattr(m, 'marker_extra_attributes', {})
@@ -30,10 +29,6 @@ def select_chromosome(session, chr_id):  # Superseded by make_submodels but no r
             m.selected = True
             count += 1
     session.logger.info("Selected " + str(count) + " markers")
-            #text += str(m.residue.number) + ","
-    #text = text[:-1]
-    #selected, tmp1, tmp2 = ObjectsArg.parse(text, session)
-    #select_add(session, selected)
 
 
 select_chromosome_desc = CmdDesc(required=[("chr_id", StringArg)])
@@ -297,7 +292,7 @@ def get_score_based_colour(score_mode,
     return get_colour_between(gradient_colour_1.uint8x4(), gradient_colour_2.uint8x4(), colour_percent)
 
 
-@prof
+# @prof
 def make_bed_model(session,  # TODO session not used
                    new_model,
                    items,
@@ -550,10 +545,10 @@ def visualise_bed(session,
                 break
         session.models.add([new_model])
 
-        # TODO REMOVE
-        newfile = open("newfile.txt", mode='w')
-        prof.print_stats(newfile)
-        newfile.close()
+        # # TODO REMOVE
+        # newfile = open("newfile.txt", mode='w')
+        # prof.print_stats(newfile)
+        # newfile.close()
 
 
 visualise_bed_desc = CmdDesc(required=[("bed_file", OpenFileNameArg)],
@@ -598,38 +593,50 @@ def copy_bead(bead, new_model, main_model):
     new_marker.marker_extra_attributes = bead.marker_extra_attributes
     # TODO add other things to be copied if any
 
-def make_submodels(session, main_model_id="1"):
-    # TODO maybe make function for fetching model by id like this
-    main_model = None
-    for model in session.models.list():
-        if (model.id_string == main_model_id):
-            main_model = model
-            break
 
-    if (main_model is None):
-        raise UserError("No model with id: ", main_model_id)
-
+def make_submodels_helper(session, main_model):
     # To split the model into submodels we actually just make an entirely new model and delete the old one
     # so all the atoms must be "copied" to their new models.
     submodels = {}
     from chimerax.core.models import Model
     parent = Model(main_model.name, session)
     parent.id = main_model.id
-    for m in main_model.atoms:
-        ea = getattr(m, 'marker_extra_attributes', {})
-        if (ea["chrID"] in submodels):
-            copy_bead(m, submodels[ea["chrID"]], main_model)
-        else:
-            new_sub = MarkerSet(session, ea["chrID"])
-            submodels[ea["chrID"]] = new_sub
-            copy_bead(m, new_sub, main_model)
-            parent.add([new_sub])
+    try:
+        for m in main_model.atoms:
+            ea = getattr(m, 'marker_extra_attributes', {})
+            if (ea["chrID"] in submodels):
+                copy_bead(m, submodels[ea["chrID"]], main_model)
+            else:
+                new_sub = MarkerSet(session, ea["chrID"])
+                submodels[ea["chrID"]] = new_sub
+                copy_bead(m, new_sub, main_model)
+                parent.add([new_sub])
+    except AttributeError:
+        # Either atoms is missing or extra attributes is missing
+        print("Could not split model:", main_model.name)
+    else:
+        session.models.close([main_model])
+        session.models.add([parent])
 
-    session.models.close([main_model])
-    session.models.add([parent])
+
+def make_submodels(session, main_model_id=None):  # TODO: Fix make_submodel splits on subsequent calls
+    if(main_model_id is None):
+        # Do all models
+        for model in session.models.list():
+            make_submodels_helper(session, model)
+    else:
+        # Do specified model
+        from . import util
+        main_model = util.get_model_by_id(session, main_model_id)
+
+        if (main_model is None):
+            raise UserError("No model with id: ", main_model_id)
+
+        make_submodels_helper(session, main_model)
 
 
-make_submodels_desc = CmdDesc(required=[("main_model_id", StringArg)])
+make_submodels_desc = CmdDesc(optional=[("main_model_id", StringArg)])
+
 
 def make_model_from_selection(session, new_model_name):
     new_model = MarkerSet(session, new_model_name)
@@ -640,6 +647,7 @@ def make_model_from_selection(session, new_model_name):
         seen_ids.append(bead.residue.number)
         new_model.create_marker(bead.scene_coord, bead.color, bead.radius, bead.residue.number)
     session.models.add([new_model])
+
 
 make_model_from_selection_desc = CmdDesc(required=[("new_model_name", StringArg)])
 

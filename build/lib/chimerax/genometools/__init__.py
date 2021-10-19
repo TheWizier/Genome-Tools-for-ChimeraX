@@ -7,6 +7,9 @@ from chimerax.core.toolshed import BundleAPI
 # Subclass from chimerax.core.toolshed.BundleAPI and
 # override the method for registering commands,
 # inheriting all other methods from the base class.
+from chimerax.toolbar.manager import ToolbarManager
+
+
 class _MyAPI(BundleAPI):
 
     api_version = 1     # register_command called with BundleInfo and
@@ -42,7 +45,32 @@ class _MyAPI(BundleAPI):
             return tool.GenometoolsBedModels
         raise ValueError("Unknown class name '%s'" % class_name)
 
+    # Override method
+    @staticmethod
+    def run_provider(session, name, mgr, **kw):
+        # name is name of provider
+        # mgr is manager
+        # kw (keyword arguments) listed in the bundle_info.xml
+        from chimerax.core.commands import run
+        if isinstance(mgr, ToolbarManager):
+            if name == "Test":
+                print("test clicked")
+            elif name == "Models from Chromosomes":
+                run(session, "genometools_make_submodels")
+            elif name == "Model from Selection":
+                run(session, "genometools_make_model_from_selection selection_model")
+            elif name == "Inspect Beads":
+                run(session, "genometools_inspect_beads")
+            elif name == "Highlight":
+                run(session, "genometools_highlight")
+            elif name == "Bed Models":
+                run(session, "ui tool show \"BED Models\"")
+            elif name == "Bead Overlap":
+                run(session, "ui tool show \"Bead Overlap\"")
+            elif name == "Genome Distance":
+                run(session, "ui tool show \"Genome Distance\"")
 
+        pass
 
     # Override method
     @staticmethod
@@ -79,9 +107,6 @@ class _MyAPI(BundleAPI):
         elif ci.name == "genometools_make_model_from_selection":
             func = cmd.make_model_from_selection
             desc = cmd.make_model_from_selection_desc
-        elif ci.name == "genometools_enable_saving_extra_attributes":
-            func = cmd.save_marker_attributes
-            desc = cmd.save_marker_attributes_desc
         # elif ci.name == "tutorial cofm":
         #     func = cmd.cofm
         #     desc = cmd.cofm_desc

@@ -64,7 +64,7 @@ Implements command "hello" to print the string "hello world" in the log.
       Add a chromosome to selection</ChimeraXClassifier>
 
     <ChimeraXClassifier>ChimeraX :: Command :: genometools_make_submodels :: Genome Tools ::
-      Make submodels for each chromosome</ChimeraXClassifier>
+      Make submodels for each chromosome for specified model, if no model is specified all models are tried</ChimeraXClassifier>
 
     <ChimeraXClassifier>ChimeraX :: Command :: genometools_make_model_from_selection :: Genome Tools ::
       Make a new model from selection keeping the same bead ids</ChimeraXClassifier>
@@ -83,5 +83,33 @@ Implements command "hello" to print the string "hello world" in the log.
       Genome Tools :: Graphical interface for calculating distances</ChimeraXClassifier>
 
   </Classifiers>
+
+  <DataFiles>
+
+    <DataDir>icons</DataDir>
+
+  </DataFiles>
+
+  <Providers manager="toolbar">
+
+    <Provider tab="GenomeTools" section="Test"
+      name="Test" icon="2wswLogo.jpg" description="Test description"/>
+    <Provider tab="GenomeTools" section="Models"
+      name="Models from Chromosomes" icon="2wswLogo.jpg" description="Makes submodels for each chromosome in all applicable models"/>
+    <Provider tab="GenomeTools" section="Models"
+      name="Model from Selection" icon="2wswLogo.jpg" description="Makes a new model from the current selection"/>
+    <Provider tab="GenomeTools" section="Inspect"
+      name="Inspect Beads" icon="2wswLogo.jpg" description="Print all the genome information on the current selection"/>
+    <Provider tab="GenomeTools" section="Graphics"
+      name="Highlight" icon="2wswLogo.jpg" description="Makes everything but the selection semi-transparent"/>
+
+    <Provider tab="GenomeTools" section="Tools"
+      name="Bed Models" icon="2wswLogo.jpg" description="Opens the Bed Models tool"/>
+    <Provider tab="GenomeTools" section="Tools"
+      name="Bead Overlap" icon="2wswLogo.jpg" description="Opens the Bead Overlap tool"/>
+    <Provider tab="GenomeTools" section="Tools"
+      name="Genome Distance" icon="2wswLogo.jpg" description="Opens the Genome Distance tool"/>
+
+  </Providers>
 
 </BundleInfo>

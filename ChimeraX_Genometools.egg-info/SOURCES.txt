@@ -10,6 +10,7 @@ src/bedFileForm.py
 src/browseform.py
 src/cmd.py
 src/colourRule.py
+src/distanceResults.py
 src/distanceTool.py
 src/distances.py
 src/enums.py
@@ -20,3 +21,4 @@ src/testing.py
 src/tool.py
 src/uitest.py
 src/util.py
+src/icons/2wswLogo.jpg
