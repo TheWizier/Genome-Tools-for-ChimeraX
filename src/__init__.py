@@ -53,9 +53,7 @@ class _MyAPI(BundleAPI):
         # kw (keyword arguments) listed in the bundle_info.xml
         from chimerax.core.commands import run
         if isinstance(mgr, ToolbarManager):
-            if name == "Test":
-                print("test clicked")
-            elif name == "Models from Chromosomes":
+            if name == "Models from Chromosomes":
                 run(session, "genometools_make_submodels")
             elif name == "Model from Selection":
                 run(session, "genometools_make_model_from_selection selection_model")

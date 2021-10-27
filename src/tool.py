@@ -1,5 +1,5 @@
 # vim: set expandtab shiftwidth=4 softtabstop=4:
-
+from pathlib import Path
 from typing import List
 
 import numpy as np
@@ -10,7 +10,7 @@ from matplotlib.backends.backend_qt5agg import (
 
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator, QColor, QDoubleValidator, QIntValidator
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QFileDialog
 from matplotlib.figure import Figure
 
 from chimerax.core.errors import UserError
@@ -152,7 +152,7 @@ class GenometoolsBedModels(ToolInstance):
 
         from . import cmd
 
-        import cProfile
+        import cProfile  # TODO remove profiling code
 
         pr = cProfile.Profile()
         pr.enable()
@@ -281,6 +281,9 @@ class DistanceTool(ToolInstance):
         self.tool_window = MainToolWindow(self)
         self._build_ui()
 
+        self.distances = np.empty((0))
+        self.last_filepath = None
+
     def _build_ui(self):
         from . import distances
         self.df = distances.Ui_Form()
@@ -290,13 +293,25 @@ class DistanceTool(ToolInstance):
         self.df.calculateBetweenButton.clicked.connect(self.calculate_between)
         self.df.calculatePointButton.clicked.connect(self.calculate_point)
 
+        # Setup distance metrics
+        self.df.metricComboBox.addItems(["braycurtis", "canberra", "chebyshev", "cityblock", "correlation", "cosine",
+                                        "dice", "euclidean", "hamming", "jaccard", "kulsinski",
+                                        "mahalanobis", "matching", "minkowski", "rogerstanimoto", "russellrao",
+                                        "seuclidean", "sokalmichener", "sokalsneath", "sqeuclidean"])
+        # "wminkowski", "yule", "jensenshannon"
+        self.df.metricComboBox.setCurrentIndex(7)  # Euclidean is default
+
         # Set validators
         self.model_id_validator = QRegExpValidator(QRegExp("[0-9.]*"))
         self.df.pairwiseModelId.setValidator(self.model_id_validator)
         self.int_only_validator = QIntValidator()
+        self.double_only_validator = QDoubleValidator()
         self.df.binCount.setValidator(self.int_only_validator)
-        self.df.cutoffMin.setValidator(self.int_only_validator)
-        self.df.cutoffMax.setValidator(self.int_only_validator)
+        self.df.cutoffMin.setValidator(self.double_only_validator)
+        self.df.cutoffMax.setValidator(self.double_only_validator)
+        self.df.point_X.setValidator(self.double_only_validator)
+        self.df.point_Y.setValidator(self.double_only_validator)
+        self.df.point_Z.setValidator(self.double_only_validator)
 
         # Setup result dialog
         from . import distanceResults
@@ -312,30 +327,75 @@ class DistanceTool(ToolInstance):
         self.matplot_toolbar = NavigationToolbar(self.matplot_canvas, self.drd.frame)
         self.verticalLayout_frame_1.addWidget(self.matplot_toolbar)
 
+        self.drd.saveButton.clicked.connect(self.save_array)
+
+    def save_array(self):
+        success = False
+        name = ""
+        if(self.last_filepath is not None):
+            try:
+                name, _ = QFileDialog.getSaveFileName(self.result_dialog, "Save File", self.last_filepath,
+                                                      "Numpy file (*.npy)")
+                success = True
+            except RuntimeError:
+                pass
+        if(not success):
+            try:
+                name, _ = QFileDialog.getSaveFileName(self.result_dialog, "Save File", str(Path.home()),
+                                                      "Numpy file (*.npy)")
+            except RuntimeError:
+                name, _ = QFileDialog.getSaveFileName(self.result_dialog, "Save File", "", "Numpy file (*.npy)")
+
+        if name == "":
+            return
+        self.last_filepath = name
+        if not name.endswith(".npy"):
+            name += ".npy"
+        file = open(name, "wb")
+        np.save(file, self.distances)
+        file.close()
+
+    def _show_distances_dialog(self):
+        # formatted_distances = ", ".join([str(dist) for dist in distances])  # TODO this crashes chimerax OoM?
+        formatted_distances = str(self.distances)
+        self.drd.textEdit.setText("Array of shape " + str(self.distances.shape) + ".\n" + formatted_distances)
+
+        self._show_histogram()
+
     def calculate_pairwise(self):
-        distances = distanceTool.calculate_pairwise(self.session, self.df.pairwiseModelId.text())
-        #formatted_distances = ", ".join([str(dist) for dist in distances])  # TODO this crashes chimerax OOM?
-        formatted_distances = str(distances)
-        self.drd.textEdit.setText("Array of " + str(len(distances)) + " distances.\n" + formatted_distances)
+        metric = self.df.metricComboBox.currentText()
+        self.distances = distanceTool.calculate_pairwise(self.session, self.df.pairwiseModelId.text(), metric)
+        self._show_distances_dialog()
+
+    def calculate_between(self):
+        metric = self.df.metricComboBox.currentText()
+        self.distances = distanceTool.calculate_between(self.session, self.df.ModelAId.text(), self.df.modelBId.text(), metric)
+
+        self._show_distances_dialog()
+
+    def calculate_point(self):
+        metric = self.df.metricComboBox.currentText()
+        points = np.array([[float(self.df.point_X.text()), float(self.df.point_Y.text()), float(self.df.point_Z.text())]])
+        self.distances = distanceTool.calculate_point(self.session, self.df.pointDistanceModelId.text(), points, metric)
+        self._show_distances_dialog()
+
+    def _show_histogram(self):
         bin_count = int(self.df.binCount.text())
-        if(self.df.binCount.text() == ""):
+        if (self.df.binCount.text() == ""):
             bin_count = 10
 
-        if(self.df.cutoffCheckBox.isChecked()):
-            if(self.df.cutoffMin.text() == "" or self.df.cutoffMax.text() == ""):
+        if (self.df.cutoffCheckBox.isChecked()):
+            if (self.df.cutoffMin.text() == "" or self.df.cutoffMax.text() == ""):
                 raise UserError("Empty cutoff values")
             cutoff_range = (int(self.df.cutoffMin.text()), int(self.df.cutoffMax.text()))
         else:
             cutoff_range = None
         pyplot.clf()
-        histogram = pyplot.hist(distances, bin_count, cutoff_range)
+        try:
+            histogram = pyplot.hist(self.distances, bin_count, cutoff_range)  # TODO do something with the histogram data?
+        except ValueError:
+            UserError("The histogram was unable to compute due to unsupported values")
         self.matplot_canvas.figure = pyplot.gcf()
         self.matplot_canvas.draw()
         self.result_dialog.show()
-
-    def calculate_between(self):
-        distanceTool.calculate_between(self.session)
-
-    def calculate_point(self):
-        distanceTool.calculate_point(self.session)
 

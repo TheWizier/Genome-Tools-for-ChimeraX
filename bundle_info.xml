@@ -92,8 +92,6 @@ Implements command "hello" to print the string "hello world" in the log.
 
   <Providers manager="toolbar">
 
-    <Provider tab="GenomeTools" section="Test"
-      name="Test" icon="2wswLogo.jpg" description="Test description"/>
     <Provider tab="GenomeTools" section="Models"
       name="Models from Chromosomes" icon="2wswLogo.jpg" description="Makes submodels for each chromosome in all applicable models"/>
     <Provider tab="GenomeTools" section="Models"

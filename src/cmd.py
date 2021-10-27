@@ -11,7 +11,7 @@ from .enums import BedColourMode, BedSelectMode
 
 # import line_profiler
 
-from .util import get_model_by_id
+from .util import get_model_by_id, all_atoms_in
 
 # prof = line_profiler.LineProfiler()
 
@@ -258,15 +258,8 @@ def bead_select_2(items, bead_list, select_mode):
 #     bead_start = int(bead_info[1])
 #     bead_end = int(bead_info[2])
 
-def all_atoms_in(model):
-    try:
-    #if(hasattr(model, "atoms")):
-        for atom in model.atoms:
-            yield atom
-    except AttributeError:
-        pass
-    for m in model.child_models():
-        yield from all_atoms_in(m)
+
+
 
 
 def get_colour_between(colour_1, colour_2, percent):

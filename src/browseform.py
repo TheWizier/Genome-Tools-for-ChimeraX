@@ -1,3 +1,4 @@
+from pathlib import Path
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QWidget, QFileDialog
@@ -22,6 +23,8 @@ class BrowseForm(QWidget):
 
         self.file_types = "All files (*.*)"
 
+        self.lineEdit.setText(str(Path.home()))
+
         "BED-files (*.bed *.bed3 *.bed4 *.bed5 *.bed6 *.bed7 *.bed8 *.bed9 *.bed10 *.bed11 *.bed12);;All files (*.*)"
 
     def retranslate_ui(self):
@@ -44,11 +47,18 @@ class BrowseForm(QWidget):
         #         text += filepath + ", "
         #     text = text[:-2]
         #     self.lineEdit.setText(text)
-
-        filepath, selected_filter = QFileDialog.getOpenFileName(self,
-                                     "Select a file to open",
-                                     self.lineEdit.text(),
-                                     self.file_types)
+        try:
+            filepath, selected_filter = QFileDialog.getOpenFileName(self,
+                                                                    "Select a file to open",
+                                                                    self.lineEdit.text(),
+                                                                    self.file_types)
+        except RuntimeError:
+            filepath, selected_filter = QFileDialog.getOpenFileName(self,
+                                                                    "Select a file to open",
+                                                                    "",
+                                                                    self.file_types)
+        if(filepath == ""):
+            return
         self.lineEdit.setText(filepath)
 
     def get_file_path(self):
