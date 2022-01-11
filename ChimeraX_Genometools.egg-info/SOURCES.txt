@@ -16,6 +16,7 @@ src/distances.py
 src/enums.py
 src/qcolourpicker.py
 src/qcolourrule.py
+src/selection.py
 src/testForm.py
 src/testing.py
 src/tool.py

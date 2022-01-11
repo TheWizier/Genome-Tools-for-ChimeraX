@@ -69,8 +69,11 @@ Implements command "hello" to print the string "hello world" in the log.
     <ChimeraXClassifier>ChimeraX :: Command :: genometools_make_model_from_selection :: Genome Tools ::
       Make a new model from selection keeping the same bead ids</ChimeraXClassifier>
 
-    <ChimeraXClassifier>ChimeraX :: Command :: genometools_enable_saving_extra_attributes :: Genome Tools ::
-      Enable saving of the extra attributes from cmm files in sessions</ChimeraXClassifier>
+    <!--<ChimeraXClassifier>ChimeraX :: Command :: genometools_enable_saving_extra_attributes :: Genome Tools ::
+      Enable saving of the extra attributes from cmm files in sessions</ChimeraXClassifier>-->
+
+    <ChimeraXClassifier>ChimeraX :: Command :: genometools_select :: Genome Tools ::
+      Select beads by chromosome position</ChimeraXClassifier>
 
     <!-- Register a graphical interface tool -->
     <ChimeraXClassifier>ChimeraX :: Tool :: BED Models ::
@@ -81,6 +84,9 @@ Implements command "hello" to print the string "hello world" in the log.
 
     <ChimeraXClassifier>ChimeraX :: Tool :: Genome Distances ::
       Genome Tools :: Graphical interface for calculating distances</ChimeraXClassifier>
+
+    <ChimeraXClassifier>ChimeraX :: Tool :: Selector ::
+      Genome Tools :: Graphical interface for selecting beads by chromosome position</ChimeraXClassifier>
 
   </Classifiers>
 
@@ -107,6 +113,8 @@ Implements command "hello" to print the string "hello world" in the log.
       name="Bead Overlap" icon="2wswLogo.jpg" description="Opens the Bead Overlap tool"/>
     <Provider tab="GenomeTools" section="Tools"
       name="Genome Distance" icon="2wswLogo.jpg" description="Opens the Genome Distance tool"/>
+    <Provider tab="GenomeTools" section="Tools"
+      name="Selector" icon="2wswLogo.jpg" description="Opens the Selector tool"/>
 
   </Providers>
 

@@ -35,6 +35,9 @@ class _MyAPI(BundleAPI):
         elif ti.name == "Genome Distances":
             from . import tool
             return tool.DistanceTool(session, ti.name)
+        elif ti.name == "Selector":
+            from . import tool
+            return tool.SelectionTool(session, ti.name)
         raise ValueError("trying to start unknown tool: %s" % ti.name)
 
     @staticmethod
@@ -67,6 +70,8 @@ class _MyAPI(BundleAPI):
                 run(session, "ui tool show \"Bead Overlap\"")
             elif name == "Genome Distance":
                 run(session, "ui tool show \"Genome Distance\"")
+            elif name == "Selector":
+                run(session, "ui tool show \"Selector\"")
 
         pass
 
@@ -105,6 +110,9 @@ class _MyAPI(BundleAPI):
         elif ci.name == "genometools_make_model_from_selection":
             func = cmd.make_model_from_selection
             desc = cmd.make_model_from_selection_desc
+        elif ci.name == "genometools_select":
+            func = cmd.select_beads
+            desc = cmd.select_beads_desc
         # elif ci.name == "tutorial cofm":
         #     func = cmd.cofm
         #     desc = cmd.cofm_desc

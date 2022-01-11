@@ -77,15 +77,16 @@ class GenometoolsBedModels(ToolInstance):
         self.bf.setupUi(self.tool_window.ui_area)
 
         # Set radio button group ids
-        # self.bf.colourButtonGroup.setId(self.bf.radioSingleColor, 0)
-        # self.bf.colourButtonGroup.setId(self.bf.radioScoreColor, 1)
-        # self.bf.colourButtonGroup.setId(self.bf.radioColorColor, 2)
-        #
-        # self.bf.beadSelectionModeGroup.setId(self.bf.radioInRange, 0)
-        # self.bf.beadSelectionModeGroup.setId(self.bf.radioInRangeStrict, 1)
-        # self.bf.beadSelectionModeGroup.setId(self.bf.radioStart, 2)
-        # self.bf.beadSelectionModeGroup.setId(self.bf.radioMiddle, 3)
-        # self.bf.beadSelectionModeGroup.setId(self.bf.radioEnd, 4)
+        # Used to set select and colour mode
+        self.bf.colourButtonGroup.setId(self.bf.radioSingleColor, 0)
+        self.bf.colourButtonGroup.setId(self.bf.radioScoreColor, 1)
+        self.bf.colourButtonGroup.setId(self.bf.radioColorColor, 2)
+
+        self.bf.beadSelectionModeGroup.setId(self.bf.radioInRange, 0)
+        self.bf.beadSelectionModeGroup.setId(self.bf.radioInRangeStrict, 1)
+        self.bf.beadSelectionModeGroup.setId(self.bf.radioStart, 2)
+        self.bf.beadSelectionModeGroup.setId(self.bf.radioMiddle, 3)
+        self.bf.beadSelectionModeGroup.setId(self.bf.radioEnd, 4)
 
         # Hide context options
         self.bf.scoreColourWidget.setVisible(False)
@@ -392,10 +393,45 @@ class DistanceTool(ToolInstance):
             cutoff_range = None
         pyplot.clf()
         try:
-            histogram = pyplot.hist(self.distances, bin_count, cutoff_range)  # TODO do something with the histogram data?
+            histogram = pyplot.hist(self.distances.flatten(), bin_count, cutoff_range)  # TODO do something with the histogram data?
         except ValueError:
             UserError("The histogram was unable to compute due to unsupported values")
         self.matplot_canvas.figure = pyplot.gcf()
         self.matplot_canvas.draw()
         self.result_dialog.show()
 
+
+class SelectionTool(ToolInstance):
+
+    def __init__(self, session, tool_name):
+        super().__init__(session, tool_name)
+        self.display_name = "GenomeTools Selector"
+
+        from chimerax.ui import MainToolWindow
+        self.tool_window = MainToolWindow(self)
+        self._build_ui()
+
+    def _build_ui(self):
+        from . import selection
+        self.sf = selection.Ui_Form()
+        self.sf.setupUi(self.tool_window.ui_area)
+        self.tool_window.manage('side')
+
+        self.sf.beadSelectionModeGroup.setId(self.sf.radioInRange, 0)
+        self.sf.beadSelectionModeGroup.setId(self.sf.radioInRangeStrict, 1)
+
+        self.int_only_validator = QIntValidator()
+        self.sf.fromField.setValidator(self.int_only_validator)
+        self.sf.toField.setValidator(self.int_only_validator)
+
+        self.sf.selectButton.clicked.connect(self.select)
+
+    def select(self):
+        chr_id = self.sf.chr_idField.text()
+        from_val = int(self.sf.fromField.text())
+        to_val = int(self.sf.toField.text())
+        model_id = self.sf.model_idField.text()
+        select_mode = self.sf.beadSelectionModeGroup.checkedId()
+
+        from . import cmd
+        cmd.select_beads(self.session, chr_id, from_val, to_val, model_id, select_mode)

@@ -32,6 +32,7 @@ Classifier: ChimeraX :: Provider :: Highlight :: toolbar :: tab:GenomeTools :: s
 Classifier: ChimeraX :: Provider :: Bed Models :: toolbar :: tab:GenomeTools :: section:Tools :: icon:2wswLogo.jpg :: description:"Opens the Bed Models tool"
 Classifier: ChimeraX :: Provider :: Bead Overlap :: toolbar :: tab:GenomeTools :: section:Tools :: icon:2wswLogo.jpg :: description:"Opens the Bead Overlap tool"
 Classifier: ChimeraX :: Provider :: Genome Distance :: toolbar :: tab:GenomeTools :: section:Tools :: icon:2wswLogo.jpg :: description:"Opens the Genome Distance tool"
+Classifier: ChimeraX :: Provider :: Selector :: toolbar :: tab:GenomeTools :: section:Tools :: icon:2wswLogo.jpg :: description:"Opens the Selector tool"
 Classifier: ChimeraX :: Command :: genometools_highlight :: Genome Tools ::
       Make model transparent and highlight selection
 Classifier: ChimeraX :: Command :: genometools_visualise_bed :: Genome Tools ::
@@ -44,12 +45,14 @@ Classifier: ChimeraX :: Command :: genometools_make_submodels :: Genome Tools ::
       Make submodels for each chromosome for specified model, if no model is specified all models are tried
 Classifier: ChimeraX :: Command :: genometools_make_model_from_selection :: Genome Tools ::
       Make a new model from selection keeping the same bead ids
-Classifier: ChimeraX :: Command :: genometools_enable_saving_extra_attributes :: Genome Tools ::
-      Enable saving of the extra attributes from cmm files in sessions
+Classifier: ChimeraX :: Command :: genometools_select :: Genome Tools ::
+      Select beads by chromosome position
 Classifier: ChimeraX :: Tool :: BED Models ::
       Genome Tools :: Graphical interface for creating models from .bed files
 Classifier: ChimeraX :: Tool :: Bead Overlap ::
       Genome Tools :: Graphical interface for creating models from overlapping models
 Classifier: ChimeraX :: Tool :: Genome Distances ::
       Genome Tools :: Graphical interface for calculating distances
+Classifier: ChimeraX :: Tool :: Selector ::
+      Genome Tools :: Graphical interface for selecting beads by chromosome position
 Requires-Python: >=3.7

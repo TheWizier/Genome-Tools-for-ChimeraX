@@ -5,7 +5,7 @@ from chimerax.atomic import selected_atoms
 from chimerax.core.colors import Color
 from chimerax.core.commands import CmdDesc, OpenFileNameArg, StringArg, IntArg, BoolArg, ColorArg
 from chimerax.core.errors import UserError
-from chimerax.markers import MarkerSet
+from chimerax.markers import MarkerSet, create_link
 from .OverlapRule import OverlapRule
 from .enums import BedColourMode, BedSelectMode
 
@@ -38,7 +38,7 @@ def inspect_beads(session):
     from chimerax.core.commands import all_objects
     atoms = all_objects(session).atoms
     for a in atoms[atoms.selected]:
-        session.logger.info(str(a) + ": " + str(a.marker_extra_attributes))
+        session.logger.info(str(a) + ": xyz:" + str(a.coord) + ", " + str(a.marker_extra_attributes))
 
 
 inspect_beads_desc = CmdDesc()
@@ -187,18 +187,18 @@ inspect_beads_desc = CmdDesc()
 #     return m1, m2
 
 
-def bead_select_2(items, bead_list, select_mode):
+def bead_select_2(from_val, to_val, bead_list, select_mode):
     if(select_mode == BedSelectMode.RANGE):
         start_index = None
         for bead_index in range(len(bead_list)):
-            if(int(items[1]) < bead_list[bead_index].bead_end):
+            if(int(from_val) < bead_list[bead_index].bead_end):
                 start_index = bead_index
                 break
         if start_index is None:
             return []
         end_index = None
         for bead_index in range(start_index, len(bead_list)):
-            if(int(items[2]) < bead_list[bead_index].bead_end):
+            if(int(to_val) < bead_list[bead_index].bead_end):
                 end_index = bead_index
                 break
         if end_index is None:
@@ -209,14 +209,14 @@ def bead_select_2(items, bead_list, select_mode):
     if(select_mode == BedSelectMode.RANGE_STRICT):
         start_index = None
         for bead_index in range(len(bead_list)):
-            if (int(items[1]) < bead_list[bead_index].bead_start):
+            if (int(from_val) < bead_list[bead_index].bead_start):
                 start_index = bead_index
                 break
         if start_index is None:
             return []
         end_index = None
         for bead_index in range(start_index, len(bead_list)):
-            if (int(items[2]) < bead_list[bead_index].bead_end):
+            if (int(to_val) < bead_list[bead_index].bead_end):
                 end_index = bead_index-1
                 break
         if end_index is None:
@@ -225,17 +225,17 @@ def bead_select_2(items, bead_list, select_mode):
 
     if(select_mode == BedSelectMode.START):
         for bead in bead_list:
-            if(bead.bead_start < int(items[1]) < bead.bead_end):
+            if(bead.bead_start < int(from_val) < bead.bead_end):
                 return [bead]
 
     if (select_mode == BedSelectMode.END):
         for bead in bead_list:
-            if(bead.bead_start < int(items[2]) < bead.bead_end):
+            if(bead.bead_start < int(to_val) < bead.bead_end):
                 return [bead]
 
     if (select_mode == BedSelectMode.MIDDLE):
         for bead in bead_list:
-            if(bead.bead_start < (int(items[1]) + (int(items[2]) - int(items[1])) / 2) < bead.bead_end):
+            if(bead.bead_start < (int(from_val) + (int(to_val) - int(from_val)) / 2) < bead.bead_end):
                 return [bead]
     return []
 
@@ -310,11 +310,10 @@ def make_bed_model(session,  # TODO session not used
 
     # Find the matching beads
 
-    selection = []
+    selection = []  # This selection is continuous and in order
     for key in marker_set.bead_dict:
         if(key.startswith(items[0])):
-            selection.extend(bead_select_2(items, marker_set.bead_dict[key], select_mode))
-
+            selection.extend(bead_select_2(items[1], items[2], marker_set.bead_dict[key], select_mode))
     for m in selection:
         if(m in marker_seen):
             if(colour_mode == BedColourMode.SINGLE):
@@ -380,6 +379,8 @@ def make_bed_model(session,  # TODO session not used
         # Add marker as seen
         marker_seen[m] = [new_marker, 1]
 
+        
+
 
 
 def numbered_naming(existing_name, new_name):
@@ -398,7 +399,7 @@ def numbered_naming(existing_name, new_name):
 def prepare_model(marker_set):
     bd = marker_set.bead_dict = {}  # TODO Doesnt need to be dict? (because loop through keys anyways)
     #cpil= marker_set.chr_pos_index_list = []
-    # marker_set.save_attribute_in_sessions("bead_dict", dict)  # TODO save?
+
     for m in all_atoms_in(marker_set):
         ea = getattr(m, 'marker_extra_attributes', {})
         bead_info = re.split(":|-", ea["beadID"])
@@ -538,11 +539,6 @@ def visualise_bed(session,
                 break
         session.models.add([new_model])
 
-        # # TODO REMOVE
-        # newfile = open("newfile.txt", mode='w')
-        # prof.print_stats(newfile)
-        # newfile.close()
-
 
 visualise_bed_desc = CmdDesc(required=[("bed_file", OpenFileNameArg)],
                              optional=[("select_mode", IntArg),
@@ -584,6 +580,7 @@ highlight_desc = CmdDesc(optional=[("transparency", IntArg)])
 def copy_bead(bead, new_model, main_model):
     new_marker = new_model.create_marker(bead.scene_coord, bead.color, bead.radius, bead.residue.number)
     new_marker.marker_extra_attributes = bead.marker_extra_attributes
+    return new_marker
     # TODO add other things to be copied if any
 
 
@@ -591,28 +588,48 @@ def make_submodels_helper(session, main_model):
     # To split the model into submodels we actually just make an entirely new model and delete the old one
     # so all the atoms must be "copied" to their new models.
     submodels = {}
+    correspondence_dict = {}
     from chimerax.core.models import Model
     parent = Model(main_model.name, session)
     parent.id = main_model.id
     try:
         for m in main_model.atoms:
             ea = getattr(m, 'marker_extra_attributes', {})
-            if (ea["chrID"] in submodels):
-                copy_bead(m, submodels[ea["chrID"]], main_model)
+            if ("chrID" not in ea):
+                chr_id = "NO_ID"
             else:
-                new_sub = MarkerSet(session, ea["chrID"])
-                submodels[ea["chrID"]] = new_sub
-                copy_bead(m, new_sub, main_model)
+                chr_id = ea["chrID"]
+
+            if (chr_id in submodels):
+                new_bead = copy_bead(m, submodels[chr_id], main_model)
+                correspondence_dict[m] = new_bead
+            else:
+                new_sub = MarkerSet(session, chr_id)
+                submodels[chr_id] = new_sub
+                new_bead = copy_bead(m, new_sub, main_model)
+                correspondence_dict[m] = new_bead
                 parent.add([new_sub])
+
+        # Copy links:
+        original_bonds = main_model.bonds.unique()
+        neighbours = original_bonds.atoms
+
+        for a, b, orig in zip(neighbours[0], neighbours[1], original_bonds):
+            create_link(correspondence_dict[a], correspondence_dict[b], orig.color, orig.radius)
+
     except AttributeError:
         # Either atoms is missing or extra attributes is missing
         print("Could not split model:", main_model.name)
     else:
+        if(len(submodels) <= 1):
+            print("Could not split model:", main_model.name)
+            return  # Nothing to split
         session.models.close([main_model])
         session.models.add([parent])
+        print("Split model", main_model.name, "into", len(submodels), "submodels.")
 
 
-def make_submodels(session, main_model_id=None):  # TODO: Fix make_submodel splits on subsequent calls
+def make_submodels(session, main_model_id=None):
     if(main_model_id is None):
         # Do all models
         for model in session.models.list():
@@ -694,4 +711,26 @@ def save_marker_attributes(session, model_id):  # TODO must apply to submodels a
 
 
 save_marker_attributes_desc = CmdDesc(required=[("model_id", StringArg)])
+
+
+def select_beads(session, chr_id, from_val, to_val, model_id, select_mode=BedSelectMode.RANGE):
+    model = get_model_by_id(session, model_id)
+    # Prepare model (if not already prepared)
+    if (not hasattr(model, "bead_dict")):
+        prepare_model(model)
+
+    selection = []
+    for key in model.bead_dict:
+        if(key.startswith(chr_id)):
+            selection.extend(bead_select_2(from_val, to_val, model.bead_dict[key], select_mode))
+
+    for bead in selection:
+        bead.selected = True
+
+
+select_beads_desc = CmdDesc(required=[("chr_id", StringArg),
+                                      ("from_val", IntArg),
+                                      ("to_val", IntArg),
+                                      ("model_id", StringArg)],
+                            optional=[("select_mode", IntArg)])
 
