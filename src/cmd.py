@@ -303,7 +303,8 @@ def make_bed_model(session,  # TODO session not used
                    gradient_start,
                    gradient_end,
                    start_percentile,
-                   end_percentile
+                   end_percentile,
+                   correspondence_dict
                    ):
 
     # Find all markers in the range from the BED file line
@@ -378,6 +379,8 @@ def make_bed_model(session,  # TODO session not used
         new_marker = new_model.create_marker(m.scene_coord, rgba, m.radius, m.residue.number)
         # Add marker as seen
         marker_seen[m] = [new_marker, 1]
+        # Add to correspondence dict
+        correspondence_dict[m] = new_marker
 
         
 
@@ -498,6 +501,7 @@ def visualise_bed(session,
         new_model = MarkerSet(session)
         new_model.name = new_model_name
         marker_seen = {}  # TODO Dict orig marker as key, new marker and blend factors as value?
+        correspondence_dict = {}
         # blend_factors = []
         while(True):
             items = line.strip().split()
@@ -532,11 +536,14 @@ def visualise_bed(session,
                            gradient_start,
                            gradient_end,
                            start_percentile,
-                           end_percentile)
+                           end_percentile,
+                           correspondence_dict)
 
             line = reader.readline()
             if(line == ""):  # EOF reached
                 break
+        # TODO copy links
+        copy_links(marker_set, correspondence_dict)
         session.models.add([new_model])
 
 
@@ -584,6 +591,16 @@ def copy_bead(bead, new_model, main_model):
     # TODO add other things to be copied if any
 
 
+def copy_links(main_model, correspondence_dict):
+    original_bonds = main_model.bonds.unique()
+    neighbours = original_bonds.atoms
+
+    for a, b, orig in zip(neighbours[0], neighbours[1], original_bonds):
+        if(a not in correspondence_dict or b not in correspondence_dict):  # Skip
+            continue
+        create_link(correspondence_dict[a], correspondence_dict[b], orig.color, orig.radius)
+
+
 def make_submodels_helper(session, main_model):
     # To split the model into submodels we actually just make an entirely new model and delete the old one
     # so all the atoms must be "copied" to their new models.
@@ -611,11 +628,7 @@ def make_submodels_helper(session, main_model):
                 parent.add([new_sub])
 
         # Copy links:
-        original_bonds = main_model.bonds.unique()
-        neighbours = original_bonds.atoms
-
-        for a, b, orig in zip(neighbours[0], neighbours[1], original_bonds):
-            create_link(correspondence_dict[a], correspondence_dict[b], orig.color, orig.radius)
+        copy_links(main_model, correspondence_dict)
 
     except AttributeError:
         # Either atoms is missing or extra attributes is missing
@@ -648,7 +661,7 @@ def make_submodels(session, main_model_id=None):
 make_submodels_desc = CmdDesc(optional=[("main_model_id", StringArg)])
 
 
-def make_model_from_selection(session, new_model_name):
+def make_model_from_selection(session, new_model_name):  # TODO preserve links
     new_model = MarkerSet(session, new_model_name)
     seen_ids = []
     for bead in selected_atoms(session):
