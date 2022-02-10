@@ -69,8 +69,9 @@ Implements command "hello" to print the string "hello world" in the log.
     <ChimeraXClassifier>ChimeraX :: Command :: genometools_make_model_from_selection :: Genome Tools ::
       Make a new model from selection keeping the same bead ids</ChimeraXClassifier>
 
-    <!--<ChimeraXClassifier>ChimeraX :: Command :: genometools_enable_saving_extra_attributes :: Genome Tools ::
-      Enable saving of the extra attributes from cmm files in sessions</ChimeraXClassifier>-->
+    <!-- TODO REMOVE TEST-->
+    <ChimeraXClassifier>ChimeraX :: Command :: genometools_test :: Genome Tools ::
+      For testing purposes</ChimeraXClassifier>
 
     <ChimeraXClassifier>ChimeraX :: Command :: genometools_select :: Genome Tools ::
       Select beads by chromosome position</ChimeraXClassifier>

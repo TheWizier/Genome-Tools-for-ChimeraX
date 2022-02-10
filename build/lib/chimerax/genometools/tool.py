@@ -357,7 +357,6 @@ class DistanceTool(ToolInstance):
         file.close()
 
     def _show_distances_dialog(self):
-        # formatted_distances = ", ".join([str(dist) for dist in distances])  # TODO this crashes chimerax OoM?
         formatted_distances = str(self.distances)
         self.drd.textEdit.setText("Array of shape " + str(self.distances.shape) + ".\n" + formatted_distances)
 

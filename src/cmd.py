@@ -509,6 +509,7 @@ def visualise_bed(session,
             if(len(items) < 3):
                 # Invalid bed file line
                 # skip the line
+                line = reader.readline()
                 continue
 
             if (colour_mode == BedColourMode.COLOUR and len(items) < 9):
@@ -747,3 +748,16 @@ select_beads_desc = CmdDesc(required=[("chr_id", StringArg),
                                       ("model_id", StringArg)],
                             optional=[("select_mode", IntArg)])
 
+
+# TODO remove test using ## preferably
+def test(session):
+    print("RUNNING TEST")
+    import time
+    start = time.time_ns()
+    for i in range(4000):
+        for m in all_atoms_in(session.models.list()[0]):
+            m.selected = True
+    print(time.time_ns()-start)
+
+
+test_desc = CmdDesc()

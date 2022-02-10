@@ -113,9 +113,10 @@ class _MyAPI(BundleAPI):
         elif ci.name == "genometools_select":
             func = cmd.select_beads
             desc = cmd.select_beads_desc
-        # elif ci.name == "tutorial cofm":
-        #     func = cmd.cofm
-        #     desc = cmd.cofm_desc
+        # TODO remove test
+        elif ci.name == "genometools_test":
+            func = cmd.test
+            desc = cmd.test_desc
         # elif ci.name == "tutorial highlight":
         #     func = cmd.highlight
         #     desc = cmd.highlight_desc

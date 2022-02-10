@@ -45,6 +45,8 @@ Classifier: ChimeraX :: Command :: genometools_make_submodels :: Genome Tools ::
       Make submodels for each chromosome for specified model, if no model is specified all models are tried
 Classifier: ChimeraX :: Command :: genometools_make_model_from_selection :: Genome Tools ::
       Make a new model from selection keeping the same bead ids
+Classifier: ChimeraX :: Command :: genometools_test :: Genome Tools ::
+      For testing purposes
 Classifier: ChimeraX :: Command :: genometools_select :: Genome Tools ::
       Select beads by chromosome position
 Classifier: ChimeraX :: Tool :: BED Models ::

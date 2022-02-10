@@ -504,6 +504,7 @@ def visualise_bed(session,
         correspondence_dict = {}
         # blend_factors = []
         while(True):
+            print("hepp4")
             items = line.strip().split()
             # print("len(items):", len(items))
             if(len(items) < 3):
@@ -540,9 +541,12 @@ def visualise_bed(session,
                            correspondence_dict)
 
             line = reader.readline()
+            print(line)
+            return
             if(line == ""):  # EOF reached
                 break
         # TODO copy links
+        print("afterhepp4")
         copy_links(marker_set, correspondence_dict)
         session.models.add([new_model])
 
@@ -747,3 +751,16 @@ select_beads_desc = CmdDesc(required=[("chr_id", StringArg),
                                       ("model_id", StringArg)],
                             optional=[("select_mode", IntArg)])
 
+
+# TODO remove test using ## preferably
+def test(session):
+    print("RUNNING TEST")
+    import time
+    start = time.time_ns()
+    for i in range(4000):
+        for m in all_atoms_in(session.models.list()[0]):
+            m.selected = True
+    print(time.time_ns()-start)
+
+
+test_desc = CmdDesc()
