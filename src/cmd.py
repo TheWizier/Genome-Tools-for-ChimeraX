@@ -510,6 +510,8 @@ def visualise_bed(session,
                 # Invalid bed file line
                 # skip the line
                 line = reader.readline()
+                if (line == ""):
+                    break
                 continue
 
             if (colour_mode == BedColourMode.COLOUR and len(items) < 9):

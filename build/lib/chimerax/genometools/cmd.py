@@ -504,12 +504,12 @@ def visualise_bed(session,
         correspondence_dict = {}
         # blend_factors = []
         while(True):
-            print("hepp4")
             items = line.strip().split()
             # print("len(items):", len(items))
             if(len(items) < 3):
                 # Invalid bed file line
                 # skip the line
+                line = reader.readline()
                 continue
 
             if (colour_mode == BedColourMode.COLOUR and len(items) < 9):
@@ -541,12 +541,9 @@ def visualise_bed(session,
                            correspondence_dict)
 
             line = reader.readline()
-            print(line)
-            return
             if(line == ""):  # EOF reached
                 break
         # TODO copy links
-        print("afterhepp4")
         copy_links(marker_set, correspondence_dict)
         session.models.add([new_model])
 
