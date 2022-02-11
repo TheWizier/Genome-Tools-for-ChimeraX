@@ -237,6 +237,7 @@ class Ui_Form(object):
         self.label_6.setObjectName("label_6")
         self.gridLayout_4.addWidget(self.label_6, 1, 0, 1, 1)
         self.modelName = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
+        self.modelName.setText("")
         self.modelName.setObjectName("modelName")
         self.gridLayout_4.addWidget(self.modelName, 1, 1, 1, 1)
         self.verticalLayout_5.addLayout(self.gridLayout_4)
@@ -300,9 +301,8 @@ class Ui_Form(object):
         self.label.setToolTip(_translate("Form", "ID of the genome model to generate the the new model from"))
         self.label.setText(_translate("Form", "Main model ID"))
         self.mainModelId.setText(_translate("Form", "1"))
-        self.label_6.setToolTip(_translate("Form", "Name of the model that will be generated"))
+        self.label_6.setToolTip(_translate("Form", "Name of the model that will be generated. Uses filename when empty."))
         self.label_6.setText(_translate("Form", "New model name"))
-        self.modelName.setText(_translate("Form", "bed_model"))
         self.generateModelButton.setText(_translate("Form", "Generate Model"))
 from .browseform import BrowseForm
 from .qcolourpicker import QColourPicker
