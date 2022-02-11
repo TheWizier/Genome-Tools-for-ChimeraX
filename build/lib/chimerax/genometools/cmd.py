@@ -191,14 +191,19 @@ def bead_select_2(from_val, to_val, bead_list, select_mode):
     if(select_mode == BedSelectMode.RANGE):
         start_index = None
         for bead_index in range(len(bead_list)):
-            if(int(from_val) < bead_list[bead_index].bead_end):
+            if(from_val < bead_list[bead_index].bead_end):
+
+                if(from_val == 746):
+                    print(bead_index)
+                    print(bead_list[bead_index].bead_start)
+                    print(bead_list[bead_index].bead_end)
                 start_index = bead_index
                 break
         if start_index is None:
             return []
         end_index = None
         for bead_index in range(start_index, len(bead_list)):
-            if(int(to_val) < bead_list[bead_index].bead_end):
+            if(to_val <= bead_list[bead_index].bead_end):
                 end_index = bead_index
                 break
         if end_index is None:
@@ -209,14 +214,14 @@ def bead_select_2(from_val, to_val, bead_list, select_mode):
     if(select_mode == BedSelectMode.RANGE_STRICT):
         start_index = None
         for bead_index in range(len(bead_list)):
-            if (int(from_val) < bead_list[bead_index].bead_start):
+            if (from_val < bead_list[bead_index].bead_start+1):
                 start_index = bead_index
                 break
         if start_index is None:
             return []
         end_index = None
         for bead_index in range(start_index, len(bead_list)):
-            if (int(to_val) < bead_list[bead_index].bead_end):
+            if (to_val < bead_list[bead_index].bead_end):
                 end_index = bead_index-1
                 break
         if end_index is None:
@@ -225,17 +230,17 @@ def bead_select_2(from_val, to_val, bead_list, select_mode):
 
     if(select_mode == BedSelectMode.START):
         for bead in bead_list:
-            if(bead.bead_start < int(from_val) < bead.bead_end):
+            if(bead.bead_start < from_val < bead.bead_end):
                 return [bead]
 
     if (select_mode == BedSelectMode.END):
         for bead in bead_list:
-            if(bead.bead_start < int(to_val) < bead.bead_end):
+            if(bead.bead_start < to_val < bead.bead_end):
                 return [bead]
 
     if (select_mode == BedSelectMode.MIDDLE):
         for bead in bead_list:
-            if(bead.bead_start < (int(from_val) + (int(to_val) - int(from_val)) / 2) < bead.bead_end):
+            if(bead.bead_start < (from_val + (to_val - from_val) / 2) < bead.bead_end):
                 return [bead]
     return []
 
@@ -314,7 +319,7 @@ def make_bed_model(session,  # TODO session not used
     selection = []  # This selection is continuous and in order
     for key in marker_set.bead_dict:
         if(key.startswith(items[0])):
-            selection.extend(bead_select_2(items[1], items[2], marker_set.bead_dict[key], select_mode))
+            selection.extend(bead_select_2(int(items[1]), int(items[2]), marker_set.bead_dict[key], select_mode))
     for m in selection:
         if(m in marker_seen):
             if(colour_mode == BedColourMode.SINGLE):
