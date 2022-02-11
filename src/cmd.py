@@ -198,7 +198,7 @@ def bead_select_2(from_val, to_val, bead_list, select_mode):
             return []
         end_index = None
         for bead_index in range(start_index, len(bead_list)):
-            if(int(to_val) < bead_list[bead_index].bead_end):
+            if(int(to_val) <= bead_list[bead_index].bead_end):
                 end_index = bead_index
                 break
         if end_index is None:
@@ -209,7 +209,7 @@ def bead_select_2(from_val, to_val, bead_list, select_mode):
     if(select_mode == BedSelectMode.RANGE_STRICT):
         start_index = None
         for bead_index in range(len(bead_list)):
-            if (int(from_val) < bead_list[bead_index].bead_start):
+            if (int(from_val) < bead_list[bead_index].bead_start+1):
                 start_index = bead_index
                 break
         if start_index is None:

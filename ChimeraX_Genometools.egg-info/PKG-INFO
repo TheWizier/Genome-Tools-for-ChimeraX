@@ -1,4 +1,4 @@
-Metadata-Version: 1.2
+Metadata-Version: 2.1
 Name: ChimeraX-Genometools
 Version: 0.1
 Summary: Tool for analysis of 3D genome models
@@ -6,9 +6,6 @@ Home-page: https://www.rbvi.ucsf.edu/chimerax/
 Author: William Hofsøy
 Author-email: 2wswer@gmail.com
 License: UNKNOWN
-Description: Work in progress ChimeraX bundle.
-        
-        Implements command "hello" to print the string "hello world" in the log.
 Platform: UNKNOWN
 Classifier: Framework :: ChimeraX
 Classifier: Intended Audience :: Science/Research
@@ -58,3 +55,8 @@ Classifier: ChimeraX :: Tool :: Genome Distances ::
 Classifier: ChimeraX :: Tool :: Selector ::
       Genome Tools :: Graphical interface for selecting beads by chromosome position
 Requires-Python: >=3.7
+
+Work in progress ChimeraX bundle.
+
+Implements command "hello" to print the string "hello world" in the log.
+
