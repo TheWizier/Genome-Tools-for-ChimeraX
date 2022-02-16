@@ -18,6 +18,8 @@ from chimerax.core.tools import ToolInstance
 from . import distanceTool
 from .enums import BedColourMode
 
+from os import path
+
 
 class GenometoolsBedModels(ToolInstance):
 
@@ -136,6 +138,8 @@ class GenometoolsBedModels(ToolInstance):
         hide_org = self.bf.hideOrg.isChecked()
         main_model_id = self.bf.mainModelId.text()
         new_model_name = self.bf.modelName.text()
+        if(new_model_name == ""):  # DEFAULT NAME = FILENAME
+            new_model_name = path.splitext(path.basename(filepath))[0]
         colour_1 = self.bf.colorPicker.get_color()
 
         if(colour_mode == BedColourMode.COLOUR):

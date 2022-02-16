@@ -277,10 +277,10 @@ def get_score_based_colour(score_mode,
                            gradient_colour_2):
 
     if (score_mode == 1):  # Use Percentile
-        colour_percent = max(0, min(1, (int(items[4]) - start_percentile) / (
+        colour_percent = max(0, min(1, (float(items[4]) - start_percentile) / (
                 end_percentile - start_percentile)))  # TODO division by 0 possible
     else:  # Use Score
-        colour_percent = max(0, min(1, (int(items[4]) - gradient_start) / (
+        colour_percent = max(0, min(1, (float(items[4]) - gradient_start) / (
                 gradient_end - gradient_start)))
     return get_colour_between(gradient_colour_1.uint8x4(), gradient_colour_2.uint8x4(), colour_percent)
 
@@ -475,7 +475,7 @@ def visualise_bed(session,
                 items = line.strip().split()
                 if(len(items) < 5):
                     raise UserError("Failed to colour by score as score data was missing in one or more lines in the file")
-                scores.append(int(items[4]))
+                scores.append(float(items[4]))
 
                 line = reader.readline()
                 if (line == ""):  # EOF reached
@@ -483,6 +483,7 @@ def visualise_bed(session,
 
         start_percentile = np.percentile(scores, gradient_start)
         end_percentile = np.percentile(scores, gradient_end)
+        print(f"Percentile is between:{start_percentile} - {end_percentile}")  # TODO REMOVE
         reader = open(bed_file, "r")
 
     with reader:

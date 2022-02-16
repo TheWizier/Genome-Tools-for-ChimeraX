@@ -138,7 +138,7 @@ class GenometoolsBedModels(ToolInstance):
         hide_org = self.bf.hideOrg.isChecked()
         main_model_id = self.bf.mainModelId.text()
         new_model_name = self.bf.modelName.text()
-        if(new_model_name == ""):
+        if(new_model_name == ""):  # DEFAULT NAME = FILENAME
             new_model_name = path.splitext(path.basename(filepath))[0]
         colour_1 = self.bf.colorPicker.get_color()
 
