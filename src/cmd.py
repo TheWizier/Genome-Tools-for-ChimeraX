@@ -483,7 +483,7 @@ def visualise_bed(session,
 
         start_percentile = np.percentile(scores, gradient_start)
         end_percentile = np.percentile(scores, gradient_end)
-        print(f"Percentile is between:{start_percentile} - {end_percentile}")  # TODO REMOVE
+        print(f"Percentile colouring is using range:{start_percentile} - {end_percentile}")
         reader = open(bed_file, "r")
 
     with reader:
