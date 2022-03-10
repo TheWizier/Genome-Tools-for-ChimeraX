@@ -140,3 +140,147 @@ for b in baller_i_balle(hoved_balle):
 #     # Display all white
 #     for i in marker_selection:
 #         i.color = np.array([255, 255, 255, 255], dtype=np.ubyte)
+
+
+# OLD CODEBLOCK
+# TODO NB this is not used and code is outdated:
+# def cut_bead(session, bead, pos, keep_original=False):  # TODO keep here or move to different file?
+#     '''
+#     Split a bead into two new beads while retaining selection and making new bonds.
+#     The cut is done before the pos index.
+#     :returns: The two new beads
+#     '''
+#
+#     # for var in dir(bead):
+#     #     print(var, ":")
+#     #     try:
+#     #         print(eval("bead." + var))
+#     #     except NameError:
+#     #         pass
+#
+#     # TODO Now adding min size change if neccesary
+#     minimum_radius = 0.002
+#     link_to_marker_ratio = 0.25
+#
+#     if(len(bead.neighbors) > 2 or len(bead.neighbors) < 1):
+#         print("Invalid number of neighbours for bead in cut_bead:", len(bead.neighbors))
+#         return None  # TODO or just throw error?
+#
+#     beadID = re.split(":|-", bead.marker_extra_attributes["beadID"])
+#     bead_start = int(beadID[1])
+#     bead_end = int(beadID[2])
+#
+#     # Find radius of new beads
+#     print("bead_start:", bead_start, "bead_end:", bead_end)
+#     print("pos:", pos, "bead.radius:", bead.radius)
+#     print(((pos - bead_start) / (bead_end - bead_start)))
+#     print(((bead_end - pos) / (bead_end - bead_start)))  # TODO fix math so radii add up?
+#     bead1_radius = ((pos - bead_start) / (bead_end - bead_start)) * bead.radius
+#     bead2_radius = ((bead_end - pos) / (bead_end - bead_start)) * bead.radius
+#     print("bead1_radius:", bead1_radius)
+#     print("bead2_radius:", bead2_radius)
+#
+#     neighbor_a = bead.neighbors[0]
+#     neighbor_b = bead.neighbors[1]
+#     neighbor_a_id = re.split(":|-", bead.neighbors[0].marker_extra_attributes["beadID"])
+#     neighbor_a_start = int(neighbor_a_id[1])
+#
+#     # Calculate vector to place beads on
+#     vector = None
+#     neighbor_first = False
+#     string_edge = False
+#     if(len(bead.neighbors) == 1):
+#         string_edge = True
+#         # We are at the end of the string of beads
+#         if(neighbor_a_start < bead_start):
+#             # neighbour is first -> Vector should point away from neighbour
+#             vector = bead.scene_coord - neighbor_a.scene_coord
+#             neighbor_first = True
+#         else:
+#             # neighbour is last -> Vector should point towards neighbour
+#             vector = neighbor_a.scene_coord - bead.scene_coord
+#
+#     else:
+#         # We are not at the end of a string of beads
+#         if (neighbor_a_start < bead_start):
+#             # neighbour_a is first -> Vector should point away from neighbour_a
+#             vector = neighbor_b.scene_coord - neighbor_a.scene_coord
+#             neighbor_first = True
+#         else:
+#             # neighbour_a is last -> Vector should point towards neighbour_a
+#             vector = neighbor_a.scene_coord - neighbor_b.scene_coord
+#
+#     # Calculate coordinates of new beads
+#     bead_edge = bead.scene_coord - norm_vector(vector) * bead.radius
+#     bead1_coord = bead_edge + norm_vector(vector) * bead1_radius
+#     bead2_coord = bead_edge + norm_vector(vector) * 2 * bead1_radius + norm_vector(vector) * bead2_radius
+#
+#
+#     from chimerax.markers import MarkerSet
+#     from chimerax.markers import create_link
+#     marker_sets = session.models.list(type=MarkerSet)
+#     m = marker_sets[0]  # TODO this assumes that we are always working on the first one
+#
+#     if(keep_original):
+#         m1 = m.create_marker(bead1_coord, bead.color, max(bead1_radius, minimum_radius))
+#     else:
+#         m1 = bead  # TODO change size of bonds to neighbors
+#         bead.scene_coord = bead1_coord
+#         bead.radius = max(bead1_radius, minimum_radius)
+#     m2 = m.create_marker(bead2_coord, bead.color, max(bead2_radius, minimum_radius))
+#
+#     link_radius = max(min(bead1_radius, bead2_radius), minimum_radius) * link_to_marker_ratio
+#
+#     if(string_edge):
+#         if(neighbor_first):
+#             if(keep_original):
+#                 create_link(neighbor_a, m1, bead.color, link_radius)
+#             else:
+#                 for b in m1.bonds:
+#                     if(b.other_atom(m1) == neighbor_b):
+#                         b.delete()
+#                         print("REM BOND")
+#
+#         else:
+#             create_link(m2, neighbor_a, bead.color, link_radius)
+#             if (not keep_original):
+#                 for b in m1.bonds:
+#                     if(b.other_atom(m1) == neighbor_a):
+#                         b.delete()
+#                         print("REM BOND")
+#     else:
+#         if (neighbor_first):
+#             create_link(m2, neighbor_b, bead.color, link_radius)
+#             if(keep_original):
+#                 create_link(neighbor_a, m1, bead.color, link_radius)
+#             else:
+#                 for b in m1.bonds:
+#                     if(b.other_atom(m1) == neighbor_b):
+#                         b.delete()
+#                         print("REM BOND")
+#
+#         else:
+#             create_link(m2, neighbor_a, bead.color, link_radius)
+#             if(keep_original):
+#                 create_link(neighbor_b, m1, bead.color, link_radius)
+#             else:
+#                 for b in m1.bonds:
+#                     if(b.other_atom(m1) == neighbor_a):
+#                         b.delete()
+#                         print("REM BOND")
+#     create_link(m1, m2, bead.color, link_radius)
+#
+#
+#     # Set extra_marker_attributes
+#     m1.marker_extra_attributes = {"chrID": bead.marker_extra_attributes["chrID"],
+#                                   "beadID": beadID[0] + ":" + str(bead_start) + "-" + str(pos)}
+#     m2.marker_extra_attributes = {"chrID": bead.marker_extra_attributes["chrID"],
+#                                   "beadID": beadID[0] + ":" + str(pos) + "-" + str(bead_end)}
+#     # Delete old bead  # We change the original to be part of the split instead since deletion breaks indexing
+#     # if(not keep_original):
+#     #     for b in bead.bonds:
+#     #         b.delete()
+#     #     bead.delete()
+#     # TODO preserve selection option
+#
+#     return m1, m2
