@@ -545,22 +545,6 @@ def make_overlap_model(session, overlap_rules: List[OverlapRule], model_name: st
                 break
     session.models.add([new_model])
 
-# TODO Not necessary anymore as has been implemented in ChimeraX by default
-def save_marker_attributes(session, model_id):  # TODO must apply to submodels as well!
-    m_sets = session.models.list(type=MarkerSet)
-    print(m_sets)
-    for m_set in m_sets:
-        if (m_set.id_string == model_id):
-            if(hasattr(m_set, "save_marker_attribute_in_sessions")):
-                m_set.save_marker_attribute_in_sessions('marker_extra_attributes', Dict)
-            else:  # Backwards compatibility
-                from chimerax.atomic import Atom
-                Atom.register_attr(session, 'marker_extra_attributes', "markers", attr_type=Dict)
-            print("SUCCESS")
-
-
-save_marker_attributes_desc = CmdDesc(required=[("model_id", StringArg)])
-
 
 def select_beads(session, chr_id, from_val, to_val, model_id, select_mode=BedSelectMode.RANGE):
     model = get_model_by_id(session, model_id)
@@ -585,14 +569,14 @@ select_beads_desc = CmdDesc(required=[("chr_id", StringArg),
 
 
 # TODO remove test using ## preferably
-def test(session):
-    print("RUNNING TEST")
-    import time
-    start = time.time_ns()
-    for i in range(4000):
-        for m in all_atoms_in(session.models.list()[0]):
-            m.selected = True
-    print(time.time_ns()-start)
-
-
-test_desc = CmdDesc()
+# def test(session):
+#     print("RUNNING TEST")
+#     import time
+#     start = time.time_ns()
+#     for i in range(4000):
+#         for m in all_atoms_in(session.models.list()[0]):
+#             m.selected = True
+#     print(time.time_ns()-start)
+#
+#
+# test_desc = CmdDesc()

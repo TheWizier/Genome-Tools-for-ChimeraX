@@ -284,3 +284,19 @@ for b in baller_i_balle(hoved_balle):
 #     # TODO preserve selection option
 #
 #     return m1, m2
+
+# TODO Not necessary anymore as has been implemented in ChimeraX by default
+# def save_marker_attributes(session, model_id):  # TODO must apply to submodels as well!
+#     m_sets = session.models.list(type=MarkerSet)
+#     print(m_sets)
+#     for m_set in m_sets:
+#         if (m_set.id_string == model_id):
+#             if(hasattr(m_set, "save_marker_attribute_in_sessions")):
+#                 m_set.save_marker_attribute_in_sessions('marker_extra_attributes', Dict)
+#             else:  # Backwards compatibility
+#                 from chimerax.atomic import Atom
+#                 Atom.register_attr(session, 'marker_extra_attributes', "markers", attr_type=Dict)
+#             print("SUCCESS")
+#
+#
+# save_marker_attributes_desc = CmdDesc(required=[("model_id", StringArg)])
