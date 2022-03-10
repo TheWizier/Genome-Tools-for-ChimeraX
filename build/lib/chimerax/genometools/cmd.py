@@ -461,16 +461,9 @@ def visualise_bed(session,
             UserError("Percentiles must be in the range 0-100")
 
         with reader:
-            # Skip meta lines:  TODO maybe use some of this information to display names and such
-            line = ""
             scores = []
-            while (True):
-                line = reader.readline()
-                if (line.startswith("#") or line.startswith("browser") or line.startswith("track") or line.startswith(
-                        "\n")):
-                    continue
-                else:
-                    break
+            # Skip meta lines:  TODO maybe use some of this information to display names and such
+            line = skip_meta_lines(reader)
             while (True):
                 items = line.strip().split()
                 if(len(items) < 5):
@@ -483,19 +476,13 @@ def visualise_bed(session,
 
         start_percentile = np.percentile(scores, gradient_start)
         end_percentile = np.percentile(scores, gradient_end)
-        print(f"Percentile is between:{start_percentile} - {end_percentile}")  # TODO REMOVE
+        print(f"Percentile colouring is using range:{start_percentile} - {end_percentile}")
         reader = open(bed_file, "r")
 
+    # Build the model
     with reader:
-        line = ""
-
         # Skip meta lines:  TODO maybe use some of this information to display names and such
-        while(True):
-            line = reader.readline()
-            if(line.startswith("#") or line.startswith("browser") or line.startswith("track") or line.startswith("\n")):
-                continue
-            else:
-                break
+        line = skip_meta_lines(reader)
 
         from chimerax.markers import MarkerSet
 
@@ -549,6 +536,16 @@ def visualise_bed(session,
         # TODO copy links
         copy_links(marker_set, correspondence_dict)
         session.models.add([new_model])
+
+
+def skip_meta_lines(reader):
+    while (True):
+        line = reader.readline()
+        if (line.startswith("#") or line.startswith("browser") or line.startswith("track") or line.startswith("\n")):
+            continue
+        else:
+            break
+    return line
 
 
 visualise_bed_desc = CmdDesc(required=[("bed_file", OpenFileNameArg)],
