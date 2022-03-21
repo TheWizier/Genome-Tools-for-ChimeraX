@@ -183,6 +183,7 @@ def make_bed_model(session,  # TODO session not used
             else:
                 # Apply conflict colour
                 bead.color = conflict_colour.uint8x4()
+            continue
 
         # Hide beads on main model
         if(hide_org):
@@ -499,15 +500,12 @@ make_submodels_desc = CmdDesc(optional=[("main_model_id", StringArg)])
 
 def make_model_from_selection(session, new_model_name):  # TODO preserve links
     new_model = MarkerSet(session, new_model_name)
-    #seen_ids = []
     seen_hash_table = {}
     for bead in selected_atoms(session):
         if(seen_hash_table.get(bead.residue.number, False)):
             continue
         seen_hash_table[bead.residue.number] = True
-        # if (bead.residue.number in seen_ids):
-        #     continue
-        # seen_ids.append(bead.residue.number)
+
         new_model.create_marker(bead.scene_coord, bead.color, bead.radius, bead.residue.number)
     session.models.add([new_model])
 
