@@ -94,6 +94,9 @@ class GenometoolsBedModels(ToolInstance):
         self.bf.scoreColourWidget.setVisible(False)
         self.bf.fileColourWidget.setVisible(False)
 
+        # Disable options disabled by default
+        self.bf.cutoffOptions.setEnabled(False)
+
         # Set default colours
         self.bf.colorPickerStartGradient.set_color(QColor(255, 255, 255))
         self.bf.colorPickerEndGradient.set_color(QColor(0, 0, 0))
@@ -104,6 +107,9 @@ class GenometoolsBedModels(ToolInstance):
         self.double_only_validator = QDoubleValidator()
         self.bf.startGradient.setValidator(self.double_only_validator)
         self.bf.endGradient.setValidator(self.double_only_validator)
+
+        self.bf.cutoffFrom.setValidator(self.double_only_validator)
+        self.bf.cutoffTo.setValidator(self.double_only_validator)
 
         self.bf.mainModelId.setValidator(QRegExpValidator(QRegExp("[0-9.]*"), self.bf.mainModelId))
 
@@ -155,6 +161,11 @@ class GenometoolsBedModels(ToolInstance):
         gradient_start = float(self.bf.startGradient.text())
         gradient_end = float(self.bf.endGradient.text())
 
+        enable_cutoff = self.bf.useCutoff.isChecked()
+        cutoff_mode = self.bf.scoreOrPercentileCutoff.currentIndex()
+        cutoff_start = float(self.bf.cutoffFrom.text())
+        cutoff_end = float(self.bf.cutoffTo.text())
+
         from . import cmd
 
         import cProfile  # TODO remove profiling code
@@ -175,7 +186,11 @@ class GenometoolsBedModels(ToolInstance):
                           gradient_colour_2,
                           score_mode,
                           gradient_start,
-                          gradient_end)
+                          gradient_end,
+                          enable_cutoff,
+                          cutoff_mode,
+                          cutoff_start,
+                          cutoff_end)
         pr.disable()
         pr.dump_stats("bed_performance_dump.prof")
 

@@ -139,7 +139,13 @@ def make_bed_model(session,  # TODO session not used
                    gradient_end,
                    start_percentile,
                    end_percentile,
-                   correspondence_dict
+                   correspondence_dict,
+                   enable_cutoff,
+                   cutoff_mode,
+                   cutoff_start,
+                   cutoff_end,
+                   start_cutoff_percentile,
+                   end_cutoff_percentile
                    ):
 
     # Find all markers in the range from the BED file line
@@ -151,18 +157,28 @@ def make_bed_model(session,  # TODO session not used
         if(key.startswith(items[0])):
             selection.extend(bead_select_2(int(items[1]), int(items[2]), marker_set.bead_dict[key], select_mode))
     for m in selection:
-        if(m in marker_seen):
+        # Ignore scores outside of cutoff range:
+        if (enable_cutoff):
+            if (cutoff_mode == 1):  # Use Percentile
+                if (not (start_cutoff_percentile <= float(items[4]) <= end_cutoff_percentile)):
+                    continue
+            else:  # Use Score
+                if (not (cutoff_start <= float(items[4]) <= cutoff_end)):
+                    continue
+
+        # Handle multiple entries on a single bead:
+        if (m in marker_seen):
             if(colour_mode == BedColourMode.SINGLE):
                 continue
 
             bead = marker_seen[m][0]
-            if(colour_blend):
+            if (colour_blend):
                 # Apply blend colour
 
                 # Get blend factor
                 blend_factor = marker_seen[m][1]
 
-                if(colour_mode == BedColourMode.SCORE):
+                if (colour_mode == BedColourMode.SCORE):
                     rgba = get_score_based_colour(score_mode,
                                                   items,
                                                   start_percentile,
@@ -186,7 +202,7 @@ def make_bed_model(session,  # TODO session not used
             continue
 
         # Hide beads on main model
-        if(hide_org):
+        if (hide_org):
             m.display = False  # Use display instead of hide attribute because that is what other tools use
 
         # Decide bead colour
@@ -269,7 +285,12 @@ def visualise_bed(session,
                   gradient_colour_2=Color((1, 1, 1, 1)),
                   score_mode=0,
                   gradient_start=0.0,
-                  gradient_end=0.0):
+                  gradient_end=0.0,
+                  enable_cutoff=False,
+                  cutoff_mode=0,
+                  cutoff_start=0.0,
+                  cutoff_end=0.0
+                  ):
 
     marker_set = None
     for model in session.models.list():
@@ -293,8 +314,15 @@ def visualise_bed(session,
     # Prepare percentiles
     start_percentile = None
     end_percentile = None
-    if (colour_mode == BedColourMode.SCORE and score_mode == 1):
-        if(not (0 <= gradient_start <= 100) or not (0 <= gradient_end <= 100)):
+    start_cutoff_percentile = None
+    end_cutoff_percentile = None
+    gradient_percentile_enabled = (colour_mode == BedColourMode.SCORE and score_mode == 1)
+    cutoff_percentile_enabled = (enable_cutoff and cutoff_mode == 1)
+
+    if (gradient_percentile_enabled or cutoff_percentile_enabled):
+        if (gradient_percentile_enabled and (not (0 <= gradient_start <= 100) or not (0 <= gradient_end <= 100))):
+            UserError("Percentiles must be in the range 0-100")
+        if (cutoff_percentile_enabled and (not (0 <= cutoff_start <= 100) or not (0 <= cutoff_end <= 100))):
             UserError("Percentiles must be in the range 0-100")
 
         with reader:
@@ -304,16 +332,22 @@ def visualise_bed(session,
             while (True):
                 items = line.strip().split()
                 if(len(items) < 5):
-                    raise UserError("Failed to colour by score as score data was missing in one or more lines in the file")
+                    raise UserError("Failed to calculate percentiles as score data was missing in one or more lines in the file")
                 scores.append(float(items[4]))
 
                 line = reader.readline()
                 if (line == ""):  # EOF reached
                     break
 
-        start_percentile = np.percentile(scores, gradient_start)
-        end_percentile = np.percentile(scores, gradient_end)
-        print(f"Percentile colouring is using range:{start_percentile} - {end_percentile}")
+        if(gradient_percentile_enabled):
+            start_percentile = np.percentile(scores, gradient_start)
+            end_percentile = np.percentile(scores, gradient_end)
+            print(f"Percentile colouring is using range:{start_percentile} - {end_percentile}")
+        if(cutoff_percentile_enabled):
+            start_cutoff_percentile = np.percentile(scores, cutoff_start)
+            end_cutoff_percentile = np.percentile(scores, cutoff_end)
+            print(f"Percentile cutoff is using range:{start_cutoff_percentile} - {end_cutoff_percentile}")
+
         reader = open(bed_file, "r")
 
     # Build the model
@@ -365,7 +399,14 @@ def visualise_bed(session,
                            gradient_end,
                            start_percentile,
                            end_percentile,
-                           correspondence_dict)
+                           correspondence_dict,
+                           enable_cutoff,
+                           cutoff_mode,
+                           cutoff_start,
+                           cutoff_end,
+                           start_cutoff_percentile,
+                           end_cutoff_percentile
+                           )
 
             line = reader.readline()
             if(line == ""):  # EOF reached
