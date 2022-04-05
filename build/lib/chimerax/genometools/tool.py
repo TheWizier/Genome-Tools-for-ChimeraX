@@ -3,14 +3,14 @@ from pathlib import Path
 from typing import List
 
 import numpy as np
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from matplotlib import pyplot
 from matplotlib.backends.backend_qt5agg import (
     FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar)
 
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator, QColor, QDoubleValidator, QIntValidator
-from PyQt5.QtWidgets import QDialog, QFileDialog
+from PyQt5.QtWidgets import QDialog, QFileDialog, QStyle
 from matplotlib.figure import Figure
 
 from chimerax.core.errors import UserError
@@ -236,6 +236,16 @@ class OverlapTool(ToolInstance):  # TODO maybe add help button for information o
         self.bof.scrollAreaWidgetContents.layout()
         self.bof.createModel.clicked.connect(self.create_model)
 
+        # Set up info dialog
+        from . import overlapToolInfo
+        self.info_dialog = QDialog(self.tool_window.ui_area)
+        self.oti = overlapToolInfo.Ui_Dialog()
+        self.oti.setupUi(self.info_dialog)
+        self.bof.infoButton.setIcon(self.bof.infoButton.style().standardIcon(getattr(QStyle, "SP_MessageBoxInformation")))
+        self.bof.infoButton.clicked.connect(self.info_dialog.show)
+        self.info_dialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
+
+
     def create_model(self):  # TODO the backend wants a prioritised list of rules and the selected only flag
         from.OverlapRule import OverlapRule
         import re
@@ -339,6 +349,7 @@ class DistanceTool(ToolInstance):
         self.drd = distanceResults.Ui_Dialog()
         self.drd.setupUi(self.result_dialog)
         self.drd.textEdit.setReadOnly(True)
+        self.result_dialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
 
         self.verticalLayout_frame_1 = QtWidgets.QVBoxLayout(self.drd.frame)
         self.verticalLayout_frame_1.setObjectName("verticalLayout_frame_1")

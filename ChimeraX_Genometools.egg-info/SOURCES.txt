@@ -14,6 +14,7 @@ src/distanceResults.py
 src/distanceTool.py
 src/distances.py
 src/enums.py
+src/overlapToolInfo.py
 src/qcolourpicker.py
 src/qcolourrule.py
 src/selection.py
