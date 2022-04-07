@@ -21,7 +21,7 @@ from .enums import BedColourMode
 from os import path
 
 
-class GenometoolsBedModels(ToolInstance):
+class BedModelsTool(ToolInstance):
 
 
     # Inheriting from ToolInstance makes us known to the ChimeraX tool mangager,

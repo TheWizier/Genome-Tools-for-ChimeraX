@@ -23,4 +23,3 @@ src/testing.py
 src/tool.py
 src/uitest.py
 src/util.py
-src/icons/2wswLogo.jpg

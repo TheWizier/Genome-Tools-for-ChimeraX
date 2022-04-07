@@ -43,7 +43,7 @@ class _MyAPI(BundleAPI):
     @staticmethod
     def get_class(class_name):
         # class_name will be a string
-        if class_name == "GenometoolsBedModels":
+        if class_name == "BedModelsTool":
             from . import tool
             return tool.BedModelsTool
         raise ValueError("Unknown class name '%s'" % class_name)
