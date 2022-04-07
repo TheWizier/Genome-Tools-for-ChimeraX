@@ -1,5 +1,20 @@
 import numpy as np
+from PyQt5.QtCore import QLocale
+from PyQt5.QtGui import QDoubleValidator
 
+
+# class BetterQDoubleValidator(QDoubleValidator):
+#     def __init__(self):
+#         super().__init__()
+#
+#     def validate(self, p_str, p_int):
+#         ret = super().validate(p_str, p_int)
+
+
+def get_locale(): #TODO issue with qvalidator giving 0 from , and empty without changing text field
+    ql = QLocale()
+    ql.setNumberOptions(ql.numberOptions() | QLocale.RejectGroupSeparator)
+    return ql
 
 def all_atoms_in(model):
     try:

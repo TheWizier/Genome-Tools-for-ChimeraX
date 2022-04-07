@@ -20,6 +20,8 @@ from .enums import BedColourMode
 
 from os import path
 
+from .util import get_locale
+
 
 class BedModelsTool(ToolInstance):
 
@@ -48,6 +50,8 @@ class BedModelsTool(ToolInstance):
         # Set name displayed on title bar (defaults to tool_name)
         # Must be after the superclass init, which would override it.
         self.display_name = "GenomeTools BED Models"
+
+        self.ql = get_locale()
 
         # Create the main window for our tool.  The window object will have
         # a 'ui_area' where we place the widgets composing our interface.
@@ -105,6 +109,8 @@ class BedModelsTool(ToolInstance):
 
         # Set validators
         self.double_only_validator = QDoubleValidator()
+        self.double_only_validator.setNotation(QDoubleValidator.StandardNotation) # TODO CONTINUE HERE (this didn't help)
+        # self.double_only_validator.setLocale(QtCore.QLocale("en_US"))  # TODO or not?
         self.bf.startGradient.setValidator(self.double_only_validator)
         self.bf.endGradient.setValidator(self.double_only_validator)
 
@@ -158,13 +164,13 @@ class BedModelsTool(ToolInstance):
         gradient_colour_1 = self.bf.colorPickerStartGradient.get_color()
         gradient_colour_2 = self.bf.colorPickerEndGradient.get_color()
         score_mode = self.bf.scoreOrPercentile.currentIndex()
-        gradient_start = float(self.bf.startGradient.text())
-        gradient_end = float(self.bf.endGradient.text())
+        gradient_start, _ = self.ql.toDouble(self.bf.startGradient.text())
+        gradient_end, _ = self.ql.toDouble(self.bf.endGradient.text())
 
         enable_cutoff = self.bf.useCutoff.isChecked()
         cutoff_mode = self.bf.scoreOrPercentileCutoff.currentIndex()
-        cutoff_start = float(self.bf.cutoffFrom.text())
-        cutoff_end = float(self.bf.cutoffTo.text())
+        cutoff_start, _ = self.ql.toDouble(self.bf.cutoffFrom.text())
+        cutoff_end, _ = self.ql.toDouble(self.bf.cutoffTo.text())
 
         from . import cmd
 
@@ -307,12 +313,16 @@ class DistanceTool(ToolInstance):
         super().__init__(session, tool_name)
         self.display_name = "GenomeTools Distances"
 
+        self.ql = get_locale()
+
         from chimerax.ui import MainToolWindow
         self.tool_window = MainToolWindow(self)
         self._build_ui()
 
         self.distances = np.empty((0))
         self.last_filepath = None
+
+
 
     def _build_ui(self):
         from . import distances
@@ -336,6 +346,7 @@ class DistanceTool(ToolInstance):
         self.df.pairwiseModelId.setValidator(self.model_id_validator)
         self.int_only_validator = QIntValidator()
         self.double_only_validator = QDoubleValidator()
+        # self.double_only_validator.setLocale(QtCore.QLocale("en_US")) TODO or not?
         self.df.binCount.setValidator(self.int_only_validator)
         self.df.cutoffMin.setValidator(self.double_only_validator)
         self.df.cutoffMax.setValidator(self.double_only_validator)
@@ -405,19 +416,19 @@ class DistanceTool(ToolInstance):
 
     def calculate_point(self):
         metric = self.df.metricComboBox.currentText()
-        points = np.array([[float(self.df.point_X.text()), float(self.df.point_Y.text()), float(self.df.point_Z.text())]])
+        points = np.array([[self.ql.toDouble(self.df.point_X.text())[0], self.ql.toDouble(self.df.point_Y.text())[0], self.ql.toDouble(self.df.point_Z.text())[0]]])
         self.distances = distanceTool.calculate_point(self.session, self.df.pointDistanceModelId.text(), points, metric)
         self._show_distances_dialog()
 
     def _show_histogram(self):
-        bin_count = int(self.df.binCount.text())
+        bin_count, _ = self.ql.toInt(self.df.binCount.text())
         if (self.df.binCount.text() == ""):
             bin_count = 10
 
         if (self.df.cutoffCheckBox.isChecked()):
             if (self.df.cutoffMin.text() == "" or self.df.cutoffMax.text() == ""):
                 raise UserError("Empty cutoff values")
-            cutoff_range = (int(self.df.cutoffMin.text()), int(self.df.cutoffMax.text()))
+            cutoff_range = (self.ql.toInt(self.df.cutoffMin.text())[0], self.ql.toInt(self.df.cutoffMax.text())[0])
         else:
             cutoff_range = None
         pyplot.clf()
@@ -436,6 +447,8 @@ class SelectionTool(ToolInstance):
         super().__init__(session, tool_name)
         self.display_name = "GenomeTools Selector"
 
+        self.ql = get_locale()
+
         from chimerax.ui import MainToolWindow
         self.tool_window = MainToolWindow(self)
         self._build_ui()
@@ -449,7 +462,7 @@ class SelectionTool(ToolInstance):
         self.sf.beadSelectionModeGroup.setId(self.sf.radioInRange, 0)
         self.sf.beadSelectionModeGroup.setId(self.sf.radioInRangeStrict, 1)
 
-        self.int_only_validator = QIntValidator()
+        self.int_only_validator = QIntValidator()  # TODO accept MB andM and other SI prefixes
         self.sf.fromField.setValidator(self.int_only_validator)
         self.sf.toField.setValidator(self.int_only_validator)
 
@@ -457,8 +470,8 @@ class SelectionTool(ToolInstance):
 
     def select(self):
         chr_id = self.sf.chr_idField.text()
-        from_val = int(self.sf.fromField.text())
-        to_val = int(self.sf.toField.text())
+        from_val, _ = self.ql.toInt(self.sf.fromField.text())
+        to_val, _ = self.ql.toInt(self.sf.toField.text())
         model_id = self.sf.model_idField.text()
         select_mode = self.sf.beadSelectionModeGroup.checkedId()
 

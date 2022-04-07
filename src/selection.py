@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\TheWizier\PycharmProjects\ChimeraxBundleTest\genometools\src\selection.ui'
+# Form implementation generated from reading ui file 'C:\Users\TheWizier\PycharmProjects\ChimeraxBundleTest\Genometools\src\selection.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -85,4 +85,4 @@ class Ui_Form(object):
         self.radioInRangeStrict.setText(_translate("Form", "Strictly in range"))
         self.label_4.setText(_translate("Form", "Model ID"))
         self.model_idField.setText(_translate("Form", "1"))
-        self.selectButton.setText(_translate("Form", "Select"))
+        self.selectButton.setText(_translate("Form", "Add to selection"))

@@ -28,7 +28,7 @@ class _MyAPI(BundleAPI):
         # appropriate class from the ``tool`` module.
         if ti.name == "BED Models":
             from . import tool
-            return tool.GenometoolsBedModels(session, ti.name)
+            return tool.BedModelsTool(session, ti.name)
         elif ti.name == "Bead Overlap":
             from . import tool
             return tool.OverlapTool(session, ti.name)
@@ -43,9 +43,9 @@ class _MyAPI(BundleAPI):
     @staticmethod
     def get_class(class_name):
         # class_name will be a string
-        if class_name == "GenometoolsBedModels":
+        if class_name == "BedModelsTool":
             from . import tool
-            return tool.GenometoolsBedModels
+            return tool.BedModelsTool
         raise ValueError("Unknown class name '%s'" % class_name)
 
     # Override method
