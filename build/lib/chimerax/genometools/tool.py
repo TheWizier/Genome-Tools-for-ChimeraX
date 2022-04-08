@@ -20,7 +20,7 @@ from .enums import BedColourMode
 
 from os import path
 
-from .util import get_locale
+from .util import get_locale, BetterQDoubleValidator
 
 
 class BedModelsTool(ToolInstance):
@@ -108,8 +108,8 @@ class BedModelsTool(ToolInstance):
         self.bf.conflictColorPicker_2.set_color(QColor(255, 0, 0))
 
         # Set validators
-        self.double_only_validator = QDoubleValidator()
-        self.double_only_validator.setNotation(QDoubleValidator.StandardNotation)
+        self.double_only_validator = BetterQDoubleValidator()
+        #self.double_only_validator.setNotation(QDoubleValidator.StandardNotation) # TODO CONTINUE HERE (this didn't help)
         # self.double_only_validator.setLocale(QtCore.QLocale("en_US"))  # TODO or not?
         self.bf.startGradient.setValidator(self.double_only_validator)
         self.bf.endGradient.setValidator(self.double_only_validator)

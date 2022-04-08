@@ -20,7 +20,7 @@ from .enums import BedColourMode
 
 from os import path
 
-from .util import get_locale
+from .util import get_locale, BetterQDoubleValidator
 
 
 class BedModelsTool(ToolInstance):
@@ -108,8 +108,7 @@ class BedModelsTool(ToolInstance):
         self.bf.conflictColorPicker_2.set_color(QColor(255, 0, 0))
 
         # Set validators
-        self.double_only_validator = QDoubleValidator()
-        self.double_only_validator.setNotation(QDoubleValidator.StandardNotation) # TODO CONTINUE HERE (this didn't help)
+        self.double_only_validator = BetterQDoubleValidator()
         # self.double_only_validator.setLocale(QtCore.QLocale("en_US"))  # TODO or not?
         self.bf.startGradient.setValidator(self.double_only_validator)
         self.bf.endGradient.setValidator(self.double_only_validator)
@@ -345,7 +344,7 @@ class DistanceTool(ToolInstance):
         self.model_id_validator = QRegExpValidator(QRegExp("[0-9.]*"))
         self.df.pairwiseModelId.setValidator(self.model_id_validator)
         self.int_only_validator = QIntValidator()
-        self.double_only_validator = QDoubleValidator()
+        self.double_only_validator = BetterQDoubleValidator()
         # self.double_only_validator.setLocale(QtCore.QLocale("en_US")) TODO or not?
         self.df.binCount.setValidator(self.int_only_validator)
         self.df.cutoffMin.setValidator(self.double_only_validator)
