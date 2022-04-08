@@ -32,6 +32,7 @@ Implements command "hello" to print the string "hello world" in the log.
     <Dependency name="ChimeraX-Core" version="~=1.1"/>
     <Dependency name="ChimeraX-UI" version="~=1.0"/>
     <Dependency name="PyQt5"/>
+    <Dependency name="matplotlib"/>
   </Dependencies>
 
 

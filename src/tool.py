@@ -4,6 +4,7 @@ from typing import List
 
 import numpy as np
 from PyQt5 import QtWidgets, QtCore
+
 from matplotlib import pyplot
 from matplotlib.backends.backend_qt5agg import (
     FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar)
