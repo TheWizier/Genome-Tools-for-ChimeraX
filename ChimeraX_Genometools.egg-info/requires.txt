@@ -1,3 +1,4 @@
 ChimeraX-Core~=1.1
 ChimeraX-UI~=1.0
 PyQt5
+matplotlib

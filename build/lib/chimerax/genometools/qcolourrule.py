@@ -1,15 +1,15 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QWidget
+from Qt import QtCore, QtGui, QtWidgets
+from Qt.QtCore import Signal
+from Qt.QtWidgets import QWidget
 
 from . import colourRule
 
 
 class QColourRule(QWidget):
 
-    remove_rule_clicked = pyqtSignal(object)
-    move_up_clicked = pyqtSignal(object)
-    move_down_clicked = pyqtSignal(object)
+    remove_rule_clicked = Signal(object)
+    move_up_clicked = Signal(object)
+    move_down_clicked = Signal(object)
 
     def __init__(self, parent=None):
         super().__init__(parent)

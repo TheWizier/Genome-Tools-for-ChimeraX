@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QWidget, QFileDialog
+from Qt import QtCore, QtGui, QtWidgets
+from Qt.QtWidgets import QWidget, QFileDialog
 
 
 class BrowseForm(QWidget):

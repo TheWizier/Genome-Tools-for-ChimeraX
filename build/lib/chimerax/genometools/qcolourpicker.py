@@ -1,7 +1,7 @@
-from PyQt5 import QtCore
-from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QColorDialog, QPushButton
+from Qt import QtCore
+from Qt.QtCore import QSize
+from Qt.QtGui import QColor
+from Qt.QtWidgets import QColorDialog, QPushButton
 
 from chimerax.core.colors import Color
 

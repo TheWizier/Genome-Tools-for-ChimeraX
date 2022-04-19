@@ -1,6 +1,6 @@
 import numpy as np
-from PyQt5.QtCore import QLocale
-from PyQt5.QtGui import QDoubleValidator
+from Qt.QtCore import QLocale
+from Qt.QtGui import QDoubleValidator
 
 
 class BetterQDoubleValidator(QDoubleValidator):

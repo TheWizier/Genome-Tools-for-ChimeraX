@@ -3,14 +3,16 @@ from pathlib import Path
 from typing import List
 
 import numpy as np
-from PyQt5 import QtWidgets, QtCore
+
+from Qt import QtWidgets, QtCore
+
 from matplotlib import pyplot
 from matplotlib.backends.backend_qt5agg import (
     FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar)
 
-from PyQt5.QtCore import QRegExp
-from PyQt5.QtGui import QRegExpValidator, QColor, QDoubleValidator, QIntValidator
-from PyQt5.QtWidgets import QDialog, QFileDialog, QStyle
+from Qt.QtCore import QRegularExpression
+from Qt.QtGui import QRegularExpressionValidator, QColor, QDoubleValidator, QIntValidator
+from Qt.QtWidgets import QDialog, QFileDialog, QStyle
 from matplotlib.figure import Figure
 
 from chimerax.core.errors import UserError
@@ -109,7 +111,6 @@ class BedModelsTool(ToolInstance):
 
         # Set validators
         self.double_only_validator = BetterQDoubleValidator()
-        #self.double_only_validator.setNotation(QDoubleValidator.StandardNotation) # TODO CONTINUE HERE (this didn't help)
         # self.double_only_validator.setLocale(QtCore.QLocale("en_US"))  # TODO or not?
         self.bf.startGradient.setValidator(self.double_only_validator)
         self.bf.endGradient.setValidator(self.double_only_validator)
@@ -117,7 +118,7 @@ class BedModelsTool(ToolInstance):
         self.bf.cutoffFrom.setValidator(self.double_only_validator)
         self.bf.cutoffTo.setValidator(self.double_only_validator)
 
-        self.bf.mainModelId.setValidator(QRegExpValidator(QRegExp("[0-9.]*"), self.bf.mainModelId))
+        self.bf.mainModelId.setValidator(QRegularExpressionValidator(QRegularExpression("[0-9.]*"), self.bf.mainModelId))
 
         # Connect functions
         self.bf.generateModelButton.clicked.connect(self.generate_model_from_bed)
@@ -210,7 +211,7 @@ class BedModelsTool(ToolInstance):
     #     # The x,y args are the x() and y() values of QContextMenuEvent, in the rare case
     #     # where the items put in the menu depends on where in the tool interface the menu
     #     # was raised.
-    #     from PyQt5.QtWidgets import QAction
+    #     from Qt.QtWidgets import QAction
     #     clear_action = QAction("Clear", menu)
     #     clear_action.triggered.connect(lambda *args: self.line_edit.clear())
     #     menu.addAction(clear_action)
@@ -342,10 +343,10 @@ class DistanceTool(ToolInstance):
         self.df.metricComboBox.setCurrentIndex(7)  # Euclidean is default
 
         # Set validators
-        self.model_id_validator = QRegExpValidator(QRegExp("[0-9.]*"))
+        self.model_id_validator = QRegularExpressionValidator(QRegularExpression("[0-9.]*"))
         self.df.pairwiseModelId.setValidator(self.model_id_validator)
         self.int_only_validator = QIntValidator()
-        self.double_only_validator = QDoubleValidator()
+        self.double_only_validator = BetterQDoubleValidator()
         # self.double_only_validator.setLocale(QtCore.QLocale("en_US")) TODO or not?
         self.df.binCount.setValidator(self.int_only_validator)
         self.df.cutoffMin.setValidator(self.double_only_validator)
