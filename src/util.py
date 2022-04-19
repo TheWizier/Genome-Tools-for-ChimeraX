@@ -3,6 +3,7 @@ import re
 import numpy as np
 from Qt.QtCore import QLocale
 from Qt.QtGui import QDoubleValidator
+from chimerax.atomic import Bonds
 from chimerax.markers import create_link
 
 
@@ -70,15 +71,15 @@ def get_models_recursive_by_id(session, model_id):
     if root_model is None:
         return []
     model_list = [root_model]
-    model_list.extend(get_all_submodels(session, root_model))
+    model_list.extend(get_all_submodels(root_model))
     return model_list
 
 
-def get_all_submodels(session, model):
+def get_all_submodels(model):
     submodels = []
     for m in model.child_models():
         submodels.append(m)
-        submodels.extend(get_all_submodels(session, m))
+        submodels.extend(get_all_submodels(m))
     return submodels
 
 
@@ -156,9 +157,20 @@ def copy_links(main_model, correspondence_dict):
     :param main_model: The main_model
     :param correspondence_dict: A dictionary with corresponding beads from the new model and the main_model
     """
-    original_bonds = main_model.bonds.unique()  # TODO THIS FAILS when submodels ALSO submodels not included
+
+    # Get all bonds(links) from the main model and its submodels
+    models = get_all_submodels(main_model)
+    models.append(main_model)
+    original_bonds = Bonds()
+    for model in models:
+        try:
+            original_bonds = original_bonds.merge(model.bonds.unique())
+        except AttributeError:
+            pass
+
     neighbours = original_bonds.atoms
 
+    # Copy over the required links
     for a, b, orig in zip(neighbours[0], neighbours[1], original_bonds):
         if(a not in correspondence_dict or b not in correspondence_dict):  # Skip
             continue
