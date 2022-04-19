@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QDialog, QStyle
 from Qt import QtCore
 from chimerax.core.tools import ToolInstance
 
+from .cmd import make_overlap_model
+
 
 class OverlapTool(ToolInstance):  # TODO maybe add help button for information on how it works???
 
@@ -62,7 +64,7 @@ class OverlapTool(ToolInstance):  # TODO maybe add help button for information o
             overlap_rules.append(new_overlap_rule)
 
         from .. import cmd
-        cmd.make_overlap_model(self.session, overlap_rules, self.bof.newModelName.text())
+        make_overlap_model(self.session, overlap_rules, self.bof.newModelName.text())
 
     def add_rule(self):
         from ..gui.qcolourrule import QColourRule

@@ -1,6 +1,9 @@
+import re
+
 import numpy as np
 from Qt.QtCore import QLocale
 from Qt.QtGui import QDoubleValidator
+from chimerax.markers import create_link
 
 
 class BetterQDoubleValidator(QDoubleValidator):
@@ -30,7 +33,10 @@ class BetterQDoubleValidator(QDoubleValidator):
         return p_str
 
 
-def get_locale(): #TODO issue with qvalidator giving 0 from , and empty without changing text field
+def get_locale():
+    """
+    :return: The QLocale for this project
+    """
     ql = QLocale()
     ql.setNumberOptions(ql.numberOptions() | QLocale.RejectGroupSeparator)
     return ql
@@ -46,7 +52,7 @@ def all_atoms_in(model):
         yield from all_atoms_in(m)
 
 
-def norm_vector(v):  # TODO check that it works and maybe move elsewhere
+def norm_vector(v):
     norm = np.linalg.norm(v)
     if norm == 0:
         return v
@@ -74,3 +80,86 @@ def get_all_submodels(session, model):
         submodels.append(m)
         submodels.extend(get_all_submodels(session, m))
     return submodels
+
+
+def get_colour_between(colour_1, colour_2, percent):
+    """
+    Get colour between two colours
+
+    :param colour_1: The first colour
+    :param colour_2: The second colour
+    :param percent: The percentage between the colours to find
+    :return: The colour at the percentage between the two colours
+    """
+    return [x*(1-percent)+y*percent for x, y in zip(colour_1, colour_2)]
+
+
+def numbered_naming(existing_name, new_name):  # TODO a bit strange but works fine
+    """
+    Checks for duplicate naming and returns numbered names for duplicates.
+
+    :param existing_name: Name to check against
+    :param new_name: The new name
+    :return: The new name after check and potential alteration
+    """
+    numbered_ending = re.compile("_([0-9]*)$")
+    if (existing_name == new_name):
+        match = re.search(numbered_ending, new_name)
+        if (match):
+            suffix = match.group(1)
+            new_name = new_name[:-len(suffix)]
+            new_name += str(int(suffix) + 1)
+        else:
+            new_name += "_1"
+    return new_name
+
+
+def prepare_model(marker_set):
+    bd = marker_set.bead_dict = {}  # TODO Doesnt need to be dict? (because loop through keys anyways)
+    #cpil= marker_set.chr_pos_index_list = []
+    bead_id_split_pattern = re.compile(":|-")
+    for m in all_atoms_in(marker_set):
+        ea = getattr(m, 'marker_extra_attributes', {})
+        bead_info = bead_id_split_pattern.split(ea["beadID"])
+        # bead_info = re.split(":|-", ea["beadID"])
+        chr_info = ea["chrID"]
+        bead_start = int(bead_info[1])
+        bead_end = int(bead_info[2])
+        m.bead_start = bead_start
+        m.bead_end = bead_end
+        if(chr_info not in bd):
+            bd[chr_info] = []
+        bd[chr_info].append(m)
+    for key in bd:
+        bd[key].sort(key=lambda x: x.bead_start)
+
+
+def copy_bead(bead, new_model):
+    """
+    Makes a copy of the specified bead and places it in the new model
+
+    :param bead: Bead to copy
+    :param new_model: The model to copy the bead into
+    :return: The new bead
+    """
+    new_marker = new_model.create_marker(bead.scene_coord, bead.color, bead.radius, bead.residue.number)
+    new_marker.marker_extra_attributes = bead.marker_extra_attributes
+    return new_marker
+    # TODO add other things to be copied if any
+
+
+def copy_links(main_model, correspondence_dict):
+    """
+    Links beads in the correspondence_dict if they are linked in the main_model.
+    The new links retain the colour and radius of the original link.
+
+    :param main_model: The main_model
+    :param correspondence_dict: A dictionary with corresponding beads from the new model and the main_model
+    """
+    original_bonds = main_model.bonds.unique()  # TODO THIS FAILS when submodels ALSO submodels not included
+    neighbours = original_bonds.atoms
+
+    for a, b, orig in zip(neighbours[0], neighbours[1], original_bonds):
+        if(a not in correspondence_dict or b not in correspondence_dict):  # Skip
+            continue
+        create_link(correspondence_dict[a], correspondence_dict[b], orig.color, orig.radius)

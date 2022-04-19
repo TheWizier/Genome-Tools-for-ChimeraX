@@ -4,13 +4,12 @@ from PyQt5.QtCore import QRegularExpression
 from PyQt5.QtGui import QColor, QRegularExpressionValidator
 from chimerax.core.tools import ToolInstance
 
+from .cmd import visualise_bed
 from ..enums import BedColourMode
 from ..util import get_locale, BetterQDoubleValidator
 
 
 class BedModelsTool(ToolInstance):
-
-
     # Inheriting from ToolInstance makes us known to the ChimeraX tool mangager,
     # so we can be notified and take appropriate action when sessions are closed,
     # saved, or restored, and we will be listed among running tools and so on.
@@ -18,10 +17,11 @@ class BedModelsTool(ToolInstance):
     # If cleaning up is needed on finish, override the 'delete' method
     # but be sure to call 'delete' from the superclass at the end.
 
-    SESSION_ENDURING = False    # Does this instance persist when session closes
-    SESSION_SAVE = True         # We do save/restore in sessions
-    #help = "help:user/tools/tutorial.html"# TODO add help screen for tool
-                                # Let ChimeraX know about our help page
+    SESSION_ENDURING = False  # Does this instance persist when session closes
+    SESSION_SAVE = True  # We do save/restore in sessions
+
+    # help = "help:user/tools/tutorial.html"# TODO add help screen for tool
+    # Let ChimeraX know about our help page
 
     def __init__(self, session, tool_name):
         # 'session'   - chimerax.core.session.Session instance
@@ -58,8 +58,6 @@ class BedModelsTool(ToolInstance):
         # interface, it is probably better to put the code in a method so
         # that this __init__ method remains readable.
         self._build_ui()
-
-
 
     def _build_ui(self):
         # Put our widgets in the tool window
@@ -101,7 +99,8 @@ class BedModelsTool(ToolInstance):
         self.bf.cutoffFrom.setValidator(self.double_only_validator)
         self.bf.cutoffTo.setValidator(self.double_only_validator)
 
-        self.bf.mainModelId.setValidator(QRegularExpressionValidator(QRegularExpression("[0-9.]*"), self.bf.mainModelId))
+        self.bf.mainModelId.setValidator(
+            QRegularExpressionValidator(QRegularExpression("[0-9.]*"), self.bf.mainModelId))
 
         # Connect functions
         self.bf.generateModelButton.clicked.connect(self.generate_model_from_bed)
@@ -109,7 +108,8 @@ class BedModelsTool(ToolInstance):
         self.bf.scoreOrPercentile.currentIndexChanged[int].connect(self.score_field_update)
 
         # Set filetypes for browse widget
-        self.bf.browseWidget.set_file_types("BED-files (*.bed *.bed3 *.bed4 *.bed5 *.bed6 *.bed7 *.bed8 *.bed9 *.bed10 *.bed11 *.bed12);;All files (*.*)")
+        self.bf.browseWidget.set_file_types(
+            "BED-files (*.bed *.bed3 *.bed4 *.bed5 *.bed6 *.bed7 *.bed8 *.bed9 *.bed10 *.bed11 *.bed12);;All files (*.*)")
 
         # Show the window on the user-preferred side of the ChimeraX
         # main window
@@ -134,11 +134,11 @@ class BedModelsTool(ToolInstance):
         hide_org = self.bf.hideOrg.isChecked()
         main_model_id = self.bf.mainModelId.text()
         new_model_name = self.bf.modelName.text()
-        if(new_model_name == ""):  # DEFAULT NAME = FILENAME
+        if (new_model_name == ""):  # DEFAULT NAME = FILENAME
             new_model_name = path.splitext(path.basename(filepath))[0]
         colour_1 = self.bf.colorPicker.get_color()
 
-        if(colour_mode == BedColourMode.COLOUR):
+        if (colour_mode == BedColourMode.COLOUR):
             colour_blend = self.bf.colourBlendCheckBox.isChecked()
             colour_2 = self.bf.conflictColorPicker.get_color()
         else:
@@ -162,28 +162,27 @@ class BedModelsTool(ToolInstance):
 
         pr = cProfile.Profile()
         pr.enable()
-        cmd.visualise_bed(self.session,
-                          filepath,
-                          select_mode,
-                          colour_mode,
-                          hide_org,
-                          colour_1,
-                          colour_2,
-                          colour_blend,
-                          main_model_id,
-                          new_model_name,
-                          gradient_colour_1,
-                          gradient_colour_2,
-                          score_mode,
-                          gradient_start,
-                          gradient_end,
-                          enable_cutoff,
-                          cutoff_mode,
-                          cutoff_start,
-                          cutoff_end)
+        visualise_bed(self.session,
+                      filepath,
+                      select_mode,
+                      colour_mode,
+                      hide_org,
+                      colour_1,
+                      colour_2,
+                      colour_blend,
+                      main_model_id,
+                      new_model_name,
+                      gradient_colour_1,
+                      gradient_colour_2,
+                      score_mode,
+                      gradient_start,
+                      gradient_end,
+                      enable_cutoff,
+                      cutoff_mode,
+                      cutoff_start,
+                      cutoff_end)
         pr.disable()
         pr.dump_stats("bed_performance_dump.prof")
-
 
     # TODO if I want a right click menu this is how to do it
     # def fill_context_menu(self, menu, x, y):

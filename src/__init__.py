@@ -96,11 +96,12 @@ class _MyAPI(BundleAPI):
             func = cmd.highlight
             desc = cmd.highlight_desc
         elif ci.name == "genometools_visualise_bed":
+            from .BedModelsTool import cmd
             func = cmd.visualise_bed
             desc = cmd.visualise_bed_desc
         elif ci.name == "genometools_inspect_beads":
-            func = cmd.inspect_beads
-            desc = cmd.inspect_beads_desc
+            func = cmd.dump_bead_data
+            desc = cmd.dump_bead_data_desc
         elif ci.name == "genometools_select_chromosome":
             func = cmd.select_chromosome
             desc = cmd.select_chromosome_desc
