@@ -1,7 +1,7 @@
 import numpy as np
 
 from chimerax.core.errors import UserError
-from .util import get_model_by_id, get_models_recursive_by_id
+from ..util import get_model_by_id, get_models_recursive_by_id
 import scipy.spatial.distance
 
 

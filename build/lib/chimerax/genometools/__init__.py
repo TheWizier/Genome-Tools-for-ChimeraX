@@ -27,16 +27,16 @@ class _MyAPI(BundleAPI):
         # trailing whitespace), and create and return an instance of the
         # appropriate class from the ``tool`` module.
         if ti.name == "BED Models":
-            from . import tool
+            from .BedModelsTool import tool
             return tool.BedModelsTool(session, ti.name)
         elif ti.name == "Bead Overlap":
-            from . import tool
+            from .OverlapTool import tool
             return tool.OverlapTool(session, ti.name)
         elif ti.name == "Genome Distances":
-            from . import tool
+            from .DistanceTool import tool
             return tool.DistanceTool(session, ti.name)
         elif ti.name == "Selector":
-            from . import tool
+            from .SelectionTool import tool
             return tool.SelectionTool(session, ti.name)
         raise ValueError("trying to start unknown tool: %s" % ti.name)
 
@@ -44,7 +44,7 @@ class _MyAPI(BundleAPI):
     def get_class(class_name):
         # class_name will be a string
         if class_name == "BedModelsTool":
-            from . import tool
+            from .BedModelsTool import tool
             return tool.BedModelsTool
         raise ValueError("Unknown class name '%s'" % class_name)
 
