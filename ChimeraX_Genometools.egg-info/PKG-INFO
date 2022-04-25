@@ -22,8 +22,8 @@ Classifier: Operating System :: MacOS :: MacOS X
 Classifier: Operating System :: Microsoft :: Windows :: Windows 10
 Classifier: Operating System :: POSIX :: Linux
 Classifier: ChimeraX :: Bundle :: General :: 1,1 :: chimerax.genometools ::  :: 
-Classifier: ChimeraX :: Provider :: Models from Chromosomes :: toolbar :: tab:GenomeTools :: section:Models :: icon:2wswLogo.jpg :: description:"Makes submodels for each chromosome in all applicable models"
-Classifier: ChimeraX :: Provider :: Model from Selection :: toolbar :: tab:GenomeTools :: section:Models :: icon:2wswLogo.jpg :: description:"Makes a new model from the current selection"
+Classifier: ChimeraX :: Provider :: Models from Chromosomes :: toolbar :: tab:GenomeTools :: section:Models :: icon:GenomeToolsIcons_1.png :: description:"Makes submodels for each chromosome in all applicable models"
+Classifier: ChimeraX :: Provider :: Model from Selection :: toolbar :: tab:GenomeTools :: section:Models :: icon:GenomeToolsIcons_2.png :: description:"Makes a new model from the current selection"
 Classifier: ChimeraX :: Provider :: Inspect Beads :: toolbar :: tab:GenomeTools :: section:Inspect :: icon:2wswLogo.jpg :: description:"Print all the genome information on the current selection"
 Classifier: ChimeraX :: Provider :: Highlight :: toolbar :: tab:GenomeTools :: section:Graphics :: icon:2wswLogo.jpg :: description:"Makes everything but the selection semi-transparent"
 Classifier: ChimeraX :: Provider :: Bed Models :: toolbar :: tab:GenomeTools :: section:Tools :: icon:2wswLogo.jpg :: description:"Opens the Bed Models tool"

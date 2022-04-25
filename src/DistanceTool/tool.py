@@ -12,7 +12,7 @@ from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationTo
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 
-from . import distanceTool
+from . import cmd
 from ..util import get_locale, BetterQDoubleValidator
 
 
@@ -114,19 +114,19 @@ class DistanceTool(ToolInstance):
 
     def calculate_pairwise(self):
         metric = self.df.metricComboBox.currentText()
-        self.distances = distanceTool.calculate_pairwise(self.session, self.df.pairwiseModelId.text(), metric)
+        self.distances = cmd.calculate_pairwise(self.session, self.df.pairwiseModelId.text(), metric)
         self._show_distances_dialog()
 
     def calculate_between(self):
         metric = self.df.metricComboBox.currentText()
-        self.distances = distanceTool.calculate_between(self.session, self.df.ModelAId.text(), self.df.modelBId.text(), metric)
+        self.distances = cmd.calculate_between(self.session, self.df.ModelAId.text(), self.df.modelBId.text(), metric)
 
         self._show_distances_dialog()
 
     def calculate_point(self):
         metric = self.df.metricComboBox.currentText()
         points = np.array([[self.ql.toDouble(self.df.point_X.text())[0], self.ql.toDouble(self.df.point_Y.text())[0], self.ql.toDouble(self.df.point_Z.text())[0]]])
-        self.distances = distanceTool.calculate_point(self.session, self.df.pointDistanceModelId.text(), points, metric)
+        self.distances = cmd.calculate_point(self.session, self.df.pointDistanceModelId.text(), points, metric)
         self._show_distances_dialog()
 
     def _show_histogram(self):

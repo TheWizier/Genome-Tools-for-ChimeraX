@@ -5,12 +5,9 @@ from chimerax.core.commands import CmdDesc, StringArg, IntArg
 from chimerax.core.errors import UserError
 from chimerax.markers import MarkerSet
 
-from .BedModelsTool.cmd import bead_select
-from .enums import BedSelectMode
-
 # import line_profiler
 
-from .util import get_model_by_id, prepare_model, copy_bead, copy_links
+from .util import copy_bead, copy_links
 
 
 # prof = line_profiler.LineProfiler()
@@ -32,9 +29,7 @@ select_chromosome_desc = CmdDesc(required=[("chr_id", StringArg)])
 
 
 def dump_bead_data(session):
-    from chimerax.core.commands import all_objects
-    atoms = all_objects(session).atoms
-    for a in atoms[atoms.selected]:
+    for a in selected_atoms(session):
         session.logger.info(str(a) + ": xyz:" + str(a.coord) + ", " + str(a.marker_extra_attributes))
 
 
@@ -94,7 +89,7 @@ def make_submodels_helper(session, main_model):
                 parent.add([new_sub])
 
         # Copy links:
-        copy_links(main_model, correspondence_dict)
+        copy_links([main_model], correspondence_dict)
 
     except AttributeError:
         # Either atoms is missing or extra attributes is missing
@@ -127,44 +122,24 @@ def make_submodels(session, main_model_id=None):
 make_submodels_desc = CmdDesc(optional=[("main_model_id", StringArg)])
 
 
-def make_model_from_selection(session, new_model_name):  # TODO preserve links
+def make_model_from_selection(session, new_model_name):
     new_model = MarkerSet(session, new_model_name)
     seen_hash_table = {}
+    correspondence_dict = {}
     for bead in selected_atoms(session):
         if(seen_hash_table.get(bead.residue.number, False)):
             continue
         seen_hash_table[bead.residue.number] = True
 
-        new_model.create_marker(bead.scene_coord, bead.color, bead.radius, bead.residue.number)
+        new_bead = copy_bead(bead, new_model)
+        correspondence_dict[bead] = new_bead
+
+    # TODO The selection is an ordered collection, so this SHOULD work.
+    copy_links(session.models, correspondence_dict)
     session.models.add([new_model])
 
 
 make_model_from_selection_desc = CmdDesc(required=[("new_model_name", StringArg)])
-
-
-# TODO make callable as a command in chimerax OR move to separate file?
-
-
-def select_beads(session, chr_id, from_val, to_val, model_id, select_mode=BedSelectMode.RANGE):
-    model = get_model_by_id(session, model_id)
-    # Prepare model (if not already prepared)
-    if (not hasattr(model, "bead_dict")):
-        prepare_model(model)
-
-    selection = []
-    for key in model.bead_dict:
-        if(key.startswith(chr_id)):
-            selection.extend(bead_select(from_val, to_val, model.bead_dict[key], select_mode))
-
-    for bead in selection:
-        bead.selected = True
-
-
-select_beads_desc = CmdDesc(required=[("chr_id", StringArg),
-                                      ("from_val", IntArg),
-                                      ("to_val", IntArg),
-                                      ("model_id", StringArg)],
-                            optional=[("select_mode", IntArg)])
 
 
 # TODO remove test using ## preferably

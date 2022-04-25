@@ -4,12 +4,12 @@ from chimerax.core.commands import CmdDesc, OpenFileNameArg, IntArg, BoolArg, Co
 from chimerax.core.errors import UserError
 
 from ..util import get_colour_between, numbered_naming, prepare_model, copy_links
-from ..enums import BedSelectMode, BedColourMode
+from ..enums import SelectMode, BedColourMode
 
 
 def visualise_bed(session,
                   bed_file,
-                  select_mode=BedSelectMode.RANGE,
+                  select_mode=SelectMode.RANGE,
                   colour_mode=BedColourMode.SINGLE,
                   hide_org=True,
                   colour=Color((0.5, 0.5, 0.5, 1)),
@@ -146,8 +146,8 @@ def visualise_bed(session,
             line = reader.readline()
             if (line == ""):  # EOF reached
                 break
-        # TODO copy links
-        copy_links(marker_set, correspondence_dict)
+
+        copy_links([marker_set], correspondence_dict)
         session.models.add([new_model])
 
 
@@ -276,7 +276,7 @@ def make_bed_model(session,  # TODO session not used
 
 
 def bead_select(from_val, to_val, bead_list, select_mode):
-    if(select_mode == BedSelectMode.RANGE):
+    if(select_mode == SelectMode.RANGE):
         start_index = None
         for bead_index in range(len(bead_list)):
             if(from_val < bead_list[bead_index].bead_end):
@@ -294,7 +294,7 @@ def bead_select(from_val, to_val, bead_list, select_mode):
 
         return bead_list[start_index:(end_index + 1)]
 
-    if(select_mode == BedSelectMode.RANGE_STRICT):
+    if(select_mode == SelectMode.RANGE_STRICT):
         start_index = None
         for bead_index in range(len(bead_list)):
             if (from_val < bead_list[bead_index].bead_start+1):
@@ -311,17 +311,17 @@ def bead_select(from_val, to_val, bead_list, select_mode):
             end_index = len(bead_list) - 1
         return bead_list[start_index:(end_index + 1)]
 
-    if(select_mode == BedSelectMode.START):
+    if(select_mode == SelectMode.START):
         for bead in bead_list:
             if(bead.bead_start < from_val < bead.bead_end):
                 return [bead]
 
-    if (select_mode == BedSelectMode.END):
+    if (select_mode == SelectMode.END):
         for bead in bead_list:
             if(bead.bead_start < to_val < bead.bead_end):
                 return [bead]
 
-    if (select_mode == BedSelectMode.MIDDLE):
+    if (select_mode == SelectMode.MIDDLE):
         for bead in bead_list:
             if(bead.bead_start < (from_val + (to_val - from_val) / 2) < bead.bead_end):
                 return [bead]

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\TheWizier\PycharmProjects\ChimeraxBundleTest\Genometools\src\BedModelsTool\bedFileForm.ui'
+# Form implementation generated from reading ui file 'C:\Users\TheWizier\PycharmProjects\ChimeraxBundleTest\Genometools\src\gui\bedFileForm.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -166,14 +166,17 @@ class Ui_Form(object):
         self.gridLayout_3.addWidget(self.colorPickerEndGradient, 1, 3, 1, 1)
         self.verticalLayout_4.addLayout(self.gridLayout_3)
         self.colourBlendCheckBox_2 = QtWidgets.QCheckBox(self.scoreColourWidget)
+        self.colourBlendCheckBox_2.setChecked(True)
         self.colourBlendCheckBox_2.setObjectName("colourBlendCheckBox_2")
         self.verticalLayout_4.addWidget(self.colourBlendCheckBox_2)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.label_8 = QtWidgets.QLabel(self.scoreColourWidget)
+        self.label_8.setEnabled(False)
         self.label_8.setObjectName("label_8")
         self.horizontalLayout_4.addWidget(self.label_8)
         self.conflictColorPicker_2 = QColourPicker(self.scoreColourWidget)
+        self.conflictColorPicker_2.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -196,14 +199,17 @@ class Ui_Form(object):
         self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.colourBlendCheckBox = QtWidgets.QCheckBox(self.fileColourWidget)
+        self.colourBlendCheckBox.setChecked(True)
         self.colourBlendCheckBox.setObjectName("colourBlendCheckBox")
         self.verticalLayout_6.addWidget(self.colourBlendCheckBox)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.label_4 = QtWidgets.QLabel(self.fileColourWidget)
+        self.label_4.setEnabled(False)
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_3.addWidget(self.label_4)
         self.conflictColorPicker = QColourPicker(self.fileColourWidget)
+        self.conflictColorPicker.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -314,12 +320,12 @@ class Ui_Form(object):
         self.startGradient.setText(_translate("Form", "0"))
         self.colorPickerEndGradient.setText(_translate("Form", "▮"))
         self.colourBlendCheckBox_2.setToolTip(_translate("Form", "<html><head/><body><p>When multiple colors are applied to the same bead the colors will be mixed</p></body></html>"))
-        self.colourBlendCheckBox_2.setText(_translate("Form", "Use colour blend"))
+        self.colourBlendCheckBox_2.setText(_translate("Form", "Blend colours on conflict"))
         self.label_8.setToolTip(_translate("Form", "<html><head/><body><p>Color to use when a bead has multiple colors assigned to it</p></body></html>"))
         self.label_8.setText(_translate("Form", "Conflict colour"))
         self.conflictColorPicker_2.setText(_translate("Form", "▮"))
         self.colourBlendCheckBox.setToolTip(_translate("Form", "<html><head/><body><p>When multiple colors are applied to the same bead the colors will be mixed</p></body></html>"))
-        self.colourBlendCheckBox.setText(_translate("Form", "Use colour blend"))
+        self.colourBlendCheckBox.setText(_translate("Form", "Blend colours on conflict"))
         self.label_4.setToolTip(_translate("Form", "<html><head/><body><p>Color to use when a bead has multiple colors assigned to it</p></body></html>"))
         self.label_4.setText(_translate("Form", "Conflict colour"))
         self.conflictColorPicker.setText(_translate("Form", "▮"))

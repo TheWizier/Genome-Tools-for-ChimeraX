@@ -149,18 +149,22 @@ def copy_bead(bead, new_model):
     # TODO add other things to be copied if any
 
 
-def copy_links(main_model, correspondence_dict):
+def copy_links(from_models_list, correspondence_dict):
     """
-    Links beads in the correspondence_dict if they are linked in the main_model.
+    Links beads in the correspondence_dict if they are linked in the original model.
     The new links retain the colour and radius of the original link.
 
-    :param main_model: The main_model
-    :param correspondence_dict: A dictionary with corresponding beads from the new model and the main_model
+    :param from_models_list: List of models that links will be copied from
+    :param correspondence_dict: A dictionary with corresponding beads from the
+    main_model as key and new model as value
     """
 
     # Get all bonds(links) from the main model and its submodels
-    models = get_all_submodels(main_model)
-    models.append(main_model)
+    models = []
+    for from_model in from_models_list:
+        models.append(get_all_submodels(from_model))
+        models.append(from_model)
+
     original_bonds = Bonds()
     for model in models:
         try:

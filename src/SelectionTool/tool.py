@@ -38,5 +38,5 @@ class SelectionTool(ToolInstance):
         model_id = self.sf.model_idField.text()
         select_mode = self.sf.beadSelectionModeGroup.checkedId()
 
-        from .. import cmd
-        cmd.select_beads(self.session, chr_id, from_val, to_val, model_id, select_mode)
+        from .cmd import select_beads
+        select_beads(self.session, chr_id, from_val, to_val, model_id, select_mode)

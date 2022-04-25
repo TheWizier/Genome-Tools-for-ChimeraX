@@ -407,7 +407,10 @@
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When multiple colors are applied to the same bead the colors will be mixed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
-                <string>Use colour blend</string>
+                <string>Blend colours on conflict</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -415,6 +418,9 @@
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <item>
                 <widget class="QLabel" name="label_8">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Color to use when a bead has multiple colors assigned to it&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
@@ -425,6 +431,9 @@
                </item>
                <item>
                 <widget class="QColourPicker" name="conflictColorPicker_2">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -499,7 +508,10 @@
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When multiple colors are applied to the same bead the colors will be mixed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
-                <string>Use colour blend</string>
+                <string>Blend colours on conflict</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -507,6 +519,9 @@
               <layout class="QHBoxLayout" name="horizontalLayout_3">
                <item>
                 <widget class="QLabel" name="label_4">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Color to use when a bead has multiple colors assigned to it&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
@@ -517,6 +532,9 @@
                </item>
                <item>
                 <widget class="QColourPicker" name="conflictColorPicker">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                    <horstretch>0</horstretch>

@@ -9,7 +9,6 @@ from chimerax.core.toolshed import BundleAPI
 # inheriting all other methods from the base class.
 from chimerax.toolbar.manager import ToolbarManager
 
-
 class _MyAPI(BundleAPI):
 
     api_version = 1     # register_command called with BundleInfo and
@@ -112,6 +111,7 @@ class _MyAPI(BundleAPI):
             func = cmd.make_model_from_selection
             desc = cmd.make_model_from_selection_desc
         elif ci.name == "genometools_select":
+            from .SelectionTool import cmd
             func = cmd.select_beads
             desc = cmd.select_beads_desc
         # TODO remove test

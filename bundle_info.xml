@@ -31,7 +31,6 @@ Implements command "hello" to print the string "hello world" in the log.
   <Dependencies>
     <Dependency name="ChimeraX-Core" version="~=1.1"/>
     <Dependency name="ChimeraX-UI" version="~=1.0"/>
-    <Dependency name="PyQt5"/>
     <Dependency name="matplotlib"/>
   </Dependencies>
 
@@ -102,9 +101,9 @@ Implements command "hello" to print the string "hello world" in the log.
   <Providers manager="toolbar">
 
     <Provider tab="GenomeTools" section="Models"
-      name="Models from Chromosomes" icon="2wswLogo.jpg" description="Makes submodels for each chromosome in all applicable models"/>
+      name="Models from Chromosomes" icon="GenomeToolsIcons_1.png" description="Makes submodels for each chromosome in all applicable models"/>
     <Provider tab="GenomeTools" section="Models"
-      name="Model from Selection" icon="2wswLogo.jpg" description="Makes a new model from the current selection"/>
+      name="Model from Selection" icon="GenomeToolsIcons_2.png" description="Makes a new model from the current selection"/>
     <Provider tab="GenomeTools" section="Inspect"
       name="Inspect Beads" icon="2wswLogo.jpg" description="Print all the genome information on the current selection"/>
     <Provider tab="GenomeTools" section="Graphics"

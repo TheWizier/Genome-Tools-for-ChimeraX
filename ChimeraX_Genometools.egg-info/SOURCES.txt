@@ -12,13 +12,14 @@ src/BedModelsTool/__init__.py
 src/BedModelsTool/cmd.py
 src/BedModelsTool/tool.py
 src/DistanceTool/__init__.py
-src/DistanceTool/distanceTool.py
+src/DistanceTool/cmd.py
 src/DistanceTool/tool.py
 src/OverlapTool/OverlapRule.py
 src/OverlapTool/__init__.py
 src/OverlapTool/cmd.py
 src/OverlapTool/tool.py
 src/SelectionTool/__init__.py
+src/SelectionTool/cmd.py
 src/SelectionTool/tool.py
 src/gui/__init__.py
 src/gui/beadOverlap.py
@@ -31,3 +32,5 @@ src/gui/overlapToolInfo.py
 src/gui/qcolourpicker.py
 src/gui/qcolourrule.py
 src/gui/selection.py
+src/icons/GenomeToolsIcons_1.png
+src/icons/GenomeToolsIcons_2.png
