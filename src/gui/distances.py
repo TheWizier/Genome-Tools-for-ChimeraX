@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(470, 404)
+        Form.resize(429, 447)
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(Form)
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
@@ -22,10 +22,18 @@ class Ui_Form(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 468, 402))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 427, 445))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
+        self.infoButton = QtWidgets.QToolButton(self.scrollAreaWidgetContents)
+        self.infoButton.setObjectName("infoButton")
+        self.horizontalLayout_2.addWidget(self.infoButton)
+        self.verticalLayout_4.addLayout(self.horizontalLayout_2)
         self.tabWidget = QtWidgets.QTabWidget(self.scrollAreaWidgetContents)
         self.tabWidget.setObjectName("tabWidget")
         self.tab = QtWidgets.QWidget()
@@ -166,8 +174,8 @@ class Ui_Form(object):
         self.horizontalLayout_4.addLayout(self.horizontalLayout_3)
         self.verticalLayout_6.addWidget(self.cutoffOptions)
         self.verticalLayout_4.addWidget(self.groupBox_4)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_4.addItem(spacerItem)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout_4.addItem(spacerItem1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout_5.addWidget(self.scrollArea)
 
@@ -179,6 +187,7 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
+        self.infoButton.setToolTip(_translate("Form", "Help"))
         self.label.setText(_translate("Form", "Model ID"))
         self.calculatePairwiseButton.setText(_translate("Form", "Calculate"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Form", "Pairwise Distances"))

@@ -30,7 +30,7 @@ select_chromosome_desc = CmdDesc(required=[("chr_id", StringArg)])
 
 def dump_bead_data(session):
     for a in selected_atoms(session):
-        session.logger.info(f"{str(a)}, xyz:{str(a.coord)}, rgb:{str(a.color)}, {str(a.marker_extra_attributes)}")
+        session.logger.info(f"{str(a)}, xyz:{str(a.coord)}, rgba:{str(a.color)}, {str(a.marker_extra_attributes)}")
 
 
 dump_bead_data_desc = CmdDesc()

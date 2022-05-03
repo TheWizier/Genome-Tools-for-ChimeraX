@@ -2,11 +2,12 @@ from os import path
 
 from PyQt5.QtCore import QRegularExpression
 from PyQt5.QtGui import QColor, QRegularExpressionValidator
+from PyQt5.QtWidgets import QStyle
 from chimerax.core.tools import ToolInstance
 
 from .cmd import visualise_bed
 from ..enums import BedColourMode
-from ..util import get_locale, BetterQDoubleValidator
+from ..util import get_locale, BetterQDoubleValidator, show_info
 
 
 class BedModelsTool(ToolInstance):
@@ -57,13 +58,17 @@ class BedModelsTool(ToolInstance):
         # the code right here, but for any kind of even moderately complex
         # interface, it is probably better to put the code in a method so
         # that this __init__ method remains readable.
-        self._build_ui()
+        self._build_ui(session)
 
-    def _build_ui(self):
+    def _build_ui(self, session):
         # Put our widgets in the tool window
         from ..gui import bedFileForm
         self.bf = bedFileForm.Ui_Form()
         self.bf.setupUi(self.tool_window.ui_area)
+
+        # Set up help button
+        self.bf.infoButton.setIcon(self.bf.infoButton.style().standardIcon(getattr(QStyle, "SP_MessageBoxQuestion")))
+        self.bf.infoButton.clicked.connect(lambda: show_info(session, self.help))
 
         # Set radio button group ids
         # Used to set select and colour mode

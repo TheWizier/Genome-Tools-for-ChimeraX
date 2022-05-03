@@ -179,3 +179,8 @@ def copy_links(from_models_list, correspondence_dict):
         if(a not in correspondence_dict or b not in correspondence_dict):  # Skip
             continue
         create_link(correspondence_dict[a], correspondence_dict[b], orig.color, orig.radius)
+
+
+def show_info(session, help_file):
+    from chimerax.core.commands import run
+    run(session, f"help {help_file}")

@@ -1,7 +1,8 @@
-from PyQt5.QtGui import QIntValidator
+from Qt.QtGui import QIntValidator
+from Qt.QtWidgets import QStyle
 from chimerax.core.tools import ToolInstance
 
-from ..util import get_locale
+from ..util import get_locale, show_info
 
 
 class SelectionTool(ToolInstance):
@@ -16,9 +17,9 @@ class SelectionTool(ToolInstance):
 
         from chimerax.ui import MainToolWindow
         self.tool_window = MainToolWindow(self)
-        self._build_ui()
+        self._build_ui(session)
 
-    def _build_ui(self):
+    def _build_ui(self, session):
         from ..gui import selection
         self.sf = selection.Ui_Form()
         self.sf.setupUi(self.tool_window.ui_area)
@@ -27,11 +28,15 @@ class SelectionTool(ToolInstance):
         self.sf.beadSelectionModeGroup.setId(self.sf.radioInRange, 0)
         self.sf.beadSelectionModeGroup.setId(self.sf.radioInRangeStrict, 1)
 
-        self.int_only_validator = QIntValidator()  # TODO accept MB andM and other SI prefixes
+        self.int_only_validator = QIntValidator()  # TODO accept MB and M and other SI prefixes
         self.sf.fromField.setValidator(self.int_only_validator)
         self.sf.toField.setValidator(self.int_only_validator)
 
         self.sf.selectButton.clicked.connect(self.select)
+
+        # Set up help button
+        self.sf.infoButton.setIcon(self.sf.infoButton.style().standardIcon(getattr(QStyle, "SP_MessageBoxQuestion")))
+        self.sf.infoButton.clicked.connect(lambda: show_info(session, self.help))
 
     def select(self):
         chr_id = self.sf.chr_idField.text()

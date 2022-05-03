@@ -1,9 +1,9 @@
 from pathlib import Path
 
 import numpy as np
-from PyQt5.QtCore import QRegularExpression
-from PyQt5.QtGui import QRegularExpressionValidator, QIntValidator
-from PyQt5.QtWidgets import QDialog, QFileDialog
+from Qt.QtCore import QRegularExpression
+from Qt.QtGui import QRegularExpressionValidator, QIntValidator
+from Qt.QtWidgets import QDialog, QFileDialog, QStyle
 from Qt import QtCore, QtWidgets
 from chimerax.core.errors import UserError
 from chimerax.core.tools import ToolInstance
@@ -13,7 +13,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 
 from . import cmd
-from ..util import get_locale, BetterQDoubleValidator
+from ..util import get_locale, BetterQDoubleValidator, show_info
 
 
 class DistanceTool(ToolInstance):
@@ -28,14 +28,14 @@ class DistanceTool(ToolInstance):
 
         from chimerax.ui import MainToolWindow
         self.tool_window = MainToolWindow(self)
-        self._build_ui()
+        self._build_ui(session)
 
         self.distances = np.empty((0))
         self.last_filepath = None
 
 
 
-    def _build_ui(self):
+    def _build_ui(self, session):
         from ..gui import distances
         self.df = distances.Ui_Form()
         self.df.setupUi(self.tool_window.ui_area)
@@ -43,6 +43,10 @@ class DistanceTool(ToolInstance):
         self.df.calculatePairwiseButton.clicked.connect(self.calculate_pairwise)
         self.df.calculateBetweenButton.clicked.connect(self.calculate_between)
         self.df.calculatePointButton.clicked.connect(self.calculate_point)
+
+        # Set up help button
+        self.df.infoButton.setIcon(self.df.infoButton.style().standardIcon(getattr(QStyle, "SP_MessageBoxQuestion")))
+        self.df.infoButton.clicked.connect(lambda: show_info(session, self.help))
 
         # Setup distance metrics
         self.df.metricComboBox.addItems(["braycurtis", "canberra", "chebyshev", "cityblock", "correlation", "cosine",

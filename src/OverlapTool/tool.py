@@ -1,10 +1,10 @@
 from typing import List
 
-from PyQt5.QtWidgets import QDialog, QStyle
-from Qt import QtCore
+from PyQt5.QtWidgets import QStyle
 from chimerax.core.tools import ToolInstance
 
 from .cmd import make_overlap_model
+from ..util import show_info
 
 
 class OverlapTool(ToolInstance):  # TODO maybe add help button for information on how it works???
@@ -41,13 +41,9 @@ class OverlapTool(ToolInstance):  # TODO maybe add help button for information o
         #self.info_dialog = QDialog(self.tool_window.ui_area)
         #self.oti = overlapToolInfo.Ui_Dialog()
         #self.oti.setupUi(self.info_dialog)
-        self.bof.infoButton.setIcon(self.bof.infoButton.style().standardIcon(getattr(QStyle, "SP_MessageBoxInformation")))
-        self.bof.infoButton.clicked.connect(lambda: self.show_info(session))
+        self.bof.infoButton.setIcon(self.bof.infoButton.style().standardIcon(getattr(QStyle, "SP_MessageBoxQuestion")))
+        self.bof.infoButton.clicked.connect(lambda: show_info(session, self.help))
         #self.info_dialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
-
-    def show_info(self, session):
-        from chimerax.core.commands import run
-        run(session, "help help:user/tools/Bead_Overlap.html")
 
     def create_model(self):  # TODO the backend wants a prioritised list of rules and the selected only flag
         from.OverlapRule import OverlapRule
@@ -69,7 +65,6 @@ class OverlapTool(ToolInstance):  # TODO maybe add help button for information o
                 new_overlap_rule = OverlapRule(self.session, model_ids, not_include, colour)
             overlap_rules.append(new_overlap_rule)
 
-        from .. import cmd
         make_overlap_model(self.session, overlap_rules, self.bof.newModelName.text())
 
     def add_rule(self):
