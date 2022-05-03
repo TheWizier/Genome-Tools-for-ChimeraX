@@ -20,7 +20,7 @@ class BedModelsTool(ToolInstance):
     SESSION_ENDURING = False  # Does this instance persist when session closes
     SESSION_SAVE = True  # We do save/restore in sessions
 
-    # help = "help:user/tools/tutorial.html"# TODO add help screen for tool
+    help = "help:user/tools/Bed_Models.html"
     # Let ChimeraX know about our help page
 
     def __init__(self, session, tool_name):
@@ -158,10 +158,10 @@ class BedModelsTool(ToolInstance):
 
         from .. import cmd
 
-        import cProfile  # TODO remove profiling code
+        #import cProfile  # TODO remove profiling code
 
-        pr = cProfile.Profile()
-        pr.enable()
+        #pr = cProfile.Profile()
+        #pr.enable()
         visualise_bed(self.session,
                       filepath,
                       select_mode,
@@ -181,8 +181,8 @@ class BedModelsTool(ToolInstance):
                       cutoff_mode,
                       cutoff_start,
                       cutoff_end)
-        pr.disable()
-        pr.dump_stats("bed_performance_dump.prof")
+        #pr.disable()
+        #pr.dump_stats("bed_performance_dump.prof")
 
     # TODO if I want a right click menu this is how to do it
     # def fill_context_menu(self, menu, x, y):

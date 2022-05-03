@@ -21,6 +21,10 @@ src/OverlapTool/tool.py
 src/SelectionTool/__init__.py
 src/SelectionTool/cmd.py
 src/SelectionTool/tool.py
+src/docs/user/tools/Bead_Overlap.html
+src/docs/user/tools/Bed_Models.html
+src/docs/user/tools/Genome_Distance.html
+src/docs/user/tools/Genome_Selection.html
 src/gui/__init__.py
 src/gui/beadOverlap.py
 src/gui/bedFileForm.py

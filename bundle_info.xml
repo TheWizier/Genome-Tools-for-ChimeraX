@@ -16,10 +16,8 @@ will be displayed without the ChimeraX- prefix.
 
   <!-- Synopsis is a one-line description
        Description is a full multi-line description TODO give description-->
-  <Synopsis>Tool for analysis of 3D genome models</Synopsis>
+  <Synopsis>Toolset for working with 3D genome models</Synopsis>
   <Description>Work in progress ChimeraX bundle.
-
-Implements command "hello" to print the string "hello world" in the log.
   </Description>
 
   <!-- Categories is a list where this bundle should appear -->
@@ -58,7 +56,7 @@ Implements command "hello" to print the string "hello world" in the log.
     <ChimeraXClassifier>ChimeraX :: Command :: genometools_visualise_bed :: Genome Tools ::
       Open a BED file and display on model</ChimeraXClassifier>
 
-    <ChimeraXClassifier>ChimeraX :: Command :: genometools_inspect_beads :: Genome Tools ::
+    <ChimeraXClassifier>ChimeraX :: Command :: genometools_dump_bead_data :: Genome Tools ::
       Get the Chromosome data of selection</ChimeraXClassifier>
 
     <ChimeraXClassifier>ChimeraX :: Command :: genometools_select_chromosome :: Genome Tools ::
@@ -70,32 +68,27 @@ Implements command "hello" to print the string "hello world" in the log.
     <ChimeraXClassifier>ChimeraX :: Command :: genometools_make_model_from_selection :: Genome Tools ::
       Make a new model from selection keeping the same bead ids</ChimeraXClassifier>
 
-    <!-- TODO REMOVE TEST-->
-    <ChimeraXClassifier>ChimeraX :: Command :: genometools_test :: Genome Tools ::
-      For testing purposes</ChimeraXClassifier>
-
     <ChimeraXClassifier>ChimeraX :: Command :: genometools_select :: Genome Tools ::
       Select beads by chromosome position</ChimeraXClassifier>
 
     <!-- Register a graphical interface tool -->
     <ChimeraXClassifier>ChimeraX :: Tool :: BED Models ::
-      Genome Tools :: Graphical interface for creating models from .bed files</ChimeraXClassifier>
+      Genome Tools :: Tool for creating models from .bed files</ChimeraXClassifier>
 
     <ChimeraXClassifier>ChimeraX :: Tool :: Bead Overlap ::
-      Genome Tools :: Graphical interface for creating models from overlapping models</ChimeraXClassifier>
+      Genome Tools :: Tool for creating models from overlapping models</ChimeraXClassifier>
 
-    <ChimeraXClassifier>ChimeraX :: Tool :: Genome Distances ::
-      Genome Tools :: Graphical interface for calculating distances</ChimeraXClassifier>
+    <ChimeraXClassifier>ChimeraX :: Tool :: Genome Distance ::
+      Genome Tools :: Tool for calculating distances between beads</ChimeraXClassifier>
 
-    <ChimeraXClassifier>ChimeraX :: Tool :: Selector ::
-      Genome Tools :: Graphical interface for selecting beads by chromosome position</ChimeraXClassifier>
+    <ChimeraXClassifier>ChimeraX :: Tool :: Genome Selection ::
+      Genome Tools :: Tool for selecting beads by chromosome position</ChimeraXClassifier>
 
   </Classifiers>
 
   <DataFiles>
-
     <DataDir>icons</DataDir>
-
+    <DataDir>docs</DataDir>
   </DataFiles>
 
   <Providers manager="toolbar">
@@ -105,7 +98,7 @@ Implements command "hello" to print the string "hello world" in the log.
     <Provider tab="GenomeTools" section="Models"
       name="Model from Selection" icon="GenomeToolsIcons_2.png" description="Makes a new model from the current selection"/>
     <Provider tab="GenomeTools" section="Inspect"
-      name="Inspect Beads" icon="2wswLogo.jpg" description="Print all the genome information on the current selection"/>
+      name="Dump Bead Data" icon="2wswLogo.jpg" description="Print all the genome information on the current selection"/>
     <Provider tab="GenomeTools" section="Graphics"
       name="Highlight" icon="2wswLogo.jpg" description="Makes everything but the selection semi-transparent"/>
 
@@ -116,7 +109,7 @@ Implements command "hello" to print the string "hello world" in the log.
     <Provider tab="GenomeTools" section="Tools"
       name="Genome Distance" icon="2wswLogo.jpg" description="Opens the Genome Distance tool"/>
     <Provider tab="GenomeTools" section="Tools"
-      name="Selector" icon="2wswLogo.jpg" description="Opens the Selector tool"/>
+      name="Genome Selection" icon="2wswLogo.jpg" description="Opens the Genome Selection tool"/>
 
   </Providers>
 

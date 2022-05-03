@@ -1,7 +1,7 @@
 Metadata-Version: 2.1
 Name: ChimeraX-Genometools
 Version: 0.1
-Summary: Tool for analysis of 3D genome models
+Summary: Toolset for working with 3D genome models
 Home-page: https://www.rbvi.ucsf.edu/chimerax/
 Author: William Hofsøy
 Author-email: 2wswer@gmail.com
@@ -24,17 +24,17 @@ Classifier: Operating System :: POSIX :: Linux
 Classifier: ChimeraX :: Bundle :: General :: 1,1 :: chimerax.genometools ::  :: 
 Classifier: ChimeraX :: Provider :: Models from Chromosomes :: toolbar :: tab:GenomeTools :: section:Models :: icon:GenomeToolsIcons_1.png :: description:"Makes submodels for each chromosome in all applicable models"
 Classifier: ChimeraX :: Provider :: Model from Selection :: toolbar :: tab:GenomeTools :: section:Models :: icon:GenomeToolsIcons_2.png :: description:"Makes a new model from the current selection"
-Classifier: ChimeraX :: Provider :: Inspect Beads :: toolbar :: tab:GenomeTools :: section:Inspect :: icon:2wswLogo.jpg :: description:"Print all the genome information on the current selection"
+Classifier: ChimeraX :: Provider :: Dump Bead Data :: toolbar :: tab:GenomeTools :: section:Inspect :: icon:2wswLogo.jpg :: description:"Print all the genome information on the current selection"
 Classifier: ChimeraX :: Provider :: Highlight :: toolbar :: tab:GenomeTools :: section:Graphics :: icon:2wswLogo.jpg :: description:"Makes everything but the selection semi-transparent"
 Classifier: ChimeraX :: Provider :: Bed Models :: toolbar :: tab:GenomeTools :: section:Tools :: icon:2wswLogo.jpg :: description:"Opens the Bed Models tool"
 Classifier: ChimeraX :: Provider :: Bead Overlap :: toolbar :: tab:GenomeTools :: section:Tools :: icon:2wswLogo.jpg :: description:"Opens the Bead Overlap tool"
 Classifier: ChimeraX :: Provider :: Genome Distance :: toolbar :: tab:GenomeTools :: section:Tools :: icon:2wswLogo.jpg :: description:"Opens the Genome Distance tool"
-Classifier: ChimeraX :: Provider :: Selector :: toolbar :: tab:GenomeTools :: section:Tools :: icon:2wswLogo.jpg :: description:"Opens the Selector tool"
+Classifier: ChimeraX :: Provider :: Genome Selection :: toolbar :: tab:GenomeTools :: section:Tools :: icon:2wswLogo.jpg :: description:"Opens the Genome Selection tool"
 Classifier: ChimeraX :: Command :: genometools_highlight :: Genome Tools ::
       Make model transparent and highlight selection
 Classifier: ChimeraX :: Command :: genometools_visualise_bed :: Genome Tools ::
       Open a BED file and display on model
-Classifier: ChimeraX :: Command :: genometools_inspect_beads :: Genome Tools ::
+Classifier: ChimeraX :: Command :: genometools_dump_bead_data :: Genome Tools ::
       Get the Chromosome data of selection
 Classifier: ChimeraX :: Command :: genometools_select_chromosome :: Genome Tools ::
       Add a chromosome to selection
@@ -42,21 +42,17 @@ Classifier: ChimeraX :: Command :: genometools_make_submodels :: Genome Tools ::
       Make submodels for each chromosome for specified model, if no model is specified all models are tried
 Classifier: ChimeraX :: Command :: genometools_make_model_from_selection :: Genome Tools ::
       Make a new model from selection keeping the same bead ids
-Classifier: ChimeraX :: Command :: genometools_test :: Genome Tools ::
-      For testing purposes
 Classifier: ChimeraX :: Command :: genometools_select :: Genome Tools ::
       Select beads by chromosome position
 Classifier: ChimeraX :: Tool :: BED Models ::
-      Genome Tools :: Graphical interface for creating models from .bed files
+      Genome Tools :: Tool for creating models from .bed files
 Classifier: ChimeraX :: Tool :: Bead Overlap ::
-      Genome Tools :: Graphical interface for creating models from overlapping models
-Classifier: ChimeraX :: Tool :: Genome Distances ::
-      Genome Tools :: Graphical interface for calculating distances
-Classifier: ChimeraX :: Tool :: Selector ::
-      Genome Tools :: Graphical interface for selecting beads by chromosome position
+      Genome Tools :: Tool for creating models from overlapping models
+Classifier: ChimeraX :: Tool :: Genome Distance ::
+      Genome Tools :: Tool for calculating distances between beads
+Classifier: ChimeraX :: Tool :: Genome Selection ::
+      Genome Tools :: Tool for selecting beads by chromosome position
 Requires-Python: >=3.7
 
 Work in progress ChimeraX bundle.
-
-Implements command "hello" to print the string "hello world" in the log.
 

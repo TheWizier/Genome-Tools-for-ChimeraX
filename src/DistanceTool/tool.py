@@ -18,9 +18,11 @@ from ..util import get_locale, BetterQDoubleValidator
 
 class DistanceTool(ToolInstance):
 
+    help = "help:user/tools/Genome_Distance.html"
+
     def __init__(self, session, tool_name):
         super().__init__(session, tool_name)
-        self.display_name = "GenomeTools Distances"
+        self.display_name = "GenomeTools Genome Distance"
 
         self.ql = get_locale()
 

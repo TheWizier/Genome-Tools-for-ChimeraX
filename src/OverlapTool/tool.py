@@ -9,6 +9,8 @@ from .cmd import make_overlap_model
 
 class OverlapTool(ToolInstance):  # TODO maybe add help button for information on how it works???
 
+    help = "help:user/tools/Bead_Overlap.html"
+
     def __init__(self, session, tool_name):
         # 'session'   - chimerax.core.session.Session instance
         # 'tool_name' - string
@@ -34,14 +36,18 @@ class OverlapTool(ToolInstance):  # TODO maybe add help button for information o
         self.bof.createModel.clicked.connect(self.create_model)
 
         # Set up info dialog
-        from ..gui import overlapToolInfo
-        self.info_dialog = QDialog(self.tool_window.ui_area)
-        self.oti = overlapToolInfo.Ui_Dialog()
-        self.oti.setupUi(self.info_dialog)
+        # TODO Remove unused files related to this change
+        #from ..gui import overlapToolInfo
+        #self.info_dialog = QDialog(self.tool_window.ui_area)
+        #self.oti = overlapToolInfo.Ui_Dialog()
+        #self.oti.setupUi(self.info_dialog)
         self.bof.infoButton.setIcon(self.bof.infoButton.style().standardIcon(getattr(QStyle, "SP_MessageBoxInformation")))
-        self.bof.infoButton.clicked.connect(self.info_dialog.show)
-        self.info_dialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
+        self.bof.infoButton.clicked.connect(lambda: self.show_info(session))
+        #self.info_dialog.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
 
+    def show_info(self, session):
+        from chimerax.core.commands import run
+        run(session, "help help:user/tools/Bead_Overlap.html")
 
     def create_model(self):  # TODO the backend wants a prioritised list of rules and the selected only flag
         from.OverlapRule import OverlapRule

@@ -6,9 +6,11 @@ from ..util import get_locale
 
 class SelectionTool(ToolInstance):
 
+    help = "help:user/tools/Genome_Selection.html"
+
     def __init__(self, session, tool_name):
         super().__init__(session, tool_name)
-        self.display_name = "GenomeTools Selector"
+        self.display_name = "GenomeTools Genome Selection"
 
         self.ql = get_locale()
 

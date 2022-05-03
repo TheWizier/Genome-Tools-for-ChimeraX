@@ -31,10 +31,10 @@ class _MyAPI(BundleAPI):
         elif ti.name == "Bead Overlap":
             from .OverlapTool import tool
             return tool.OverlapTool(session, ti.name)
-        elif ti.name == "Genome Distances":
+        elif ti.name == "Genome Distance":
             from .DistanceTool import tool
             return tool.DistanceTool(session, ti.name)
-        elif ti.name == "Selector":
+        elif ti.name == "Genome Selection":
             from .SelectionTool import tool
             return tool.SelectionTool(session, ti.name)
         raise ValueError("trying to start unknown tool: %s" % ti.name)
@@ -59,8 +59,8 @@ class _MyAPI(BundleAPI):
                 run(session, "genometools_make_submodels")
             elif name == "Model from Selection":
                 run(session, "genometools_make_model_from_selection selection_model")
-            elif name == "Inspect Beads":
-                run(session, "genometools_inspect_beads")
+            elif name == "Dump Bead Data":
+                run(session, "genometools_dump_bead_data")
             elif name == "Highlight":
                 run(session, "genometools_highlight")
             elif name == "Bed Models":
@@ -69,8 +69,8 @@ class _MyAPI(BundleAPI):
                 run(session, "ui tool show \"Bead Overlap\"")
             elif name == "Genome Distance":
                 run(session, "ui tool show \"Genome Distance\"")
-            elif name == "Selector":
-                run(session, "ui tool show \"Selector\"")
+            elif name == "Genome Selection":
+                run(session, "ui tool show \"Genome Selection\"")
 
         pass
 
@@ -98,7 +98,7 @@ class _MyAPI(BundleAPI):
             from .BedModelsTool import cmd
             func = cmd.visualise_bed
             desc = cmd.visualise_bed_desc
-        elif ci.name == "genometools_inspect_beads":
+        elif ci.name == "genometools_dump_bead_data":
             func = cmd.dump_bead_data
             desc = cmd.dump_bead_data_desc
         elif ci.name == "genometools_select_chromosome":

@@ -62,7 +62,7 @@ def visualise_bed(session,
 
         with reader:
             scores = []
-            # Skip meta lines:  TODO maybe use some of this information to display names and such
+            # Skip meta lines:
             line = skip_meta_lines(reader)
             while (True):
                 items = line.strip().split()
@@ -88,14 +88,14 @@ def visualise_bed(session,
 
     # Build the model
     with reader:
-        # Skip meta lines:  TODO maybe use some of this information to display names and such
+        # Skip meta lines:
         line = skip_meta_lines(reader)
 
         from chimerax.markers import MarkerSet
 
         new_model = MarkerSet(session)
         new_model.name = new_model_name
-        marker_seen = {}  # TODO Dict orig marker as key, new marker and blend factors as value?
+        marker_seen = {}
         correspondence_dict = {}
         # blend_factors = []
         while (True):
@@ -116,8 +116,7 @@ def visualise_bed(session,
             if (colour_mode == BedColourMode.SCORE and len(items) < 5):
                 raise UserError("Failed to colour by score as score data was missing in one or more lines in the file")
 
-            make_bed_model(session,
-                           new_model,
+            make_bed_model(new_model,
                            items,
                            select_mode,
                            colour_mode,
@@ -162,8 +161,7 @@ visualise_bed_desc = CmdDesc(required=[("bed_file", OpenFileNameArg)],
                                        ("new_model_name", StringArg)])
 
 
-def make_bed_model(session,  # TODO session not used
-                   new_model,
+def make_bed_model(new_model,
                    items,
                    select_mode,
                    colour_mode,
@@ -338,8 +336,11 @@ def get_score_based_colour(score_mode,
                            gradient_colour_2):
 
     if (score_mode == 1):  # Use Percentile
-        colour_percent = max(0, min(1, (float(items[4]) - start_percentile) / (
-                end_percentile - start_percentile)))  # TODO division by 0 possible
+        try:
+            colour_percent = max(0, min(1, (float(items[4]) - start_percentile) / (
+                    end_percentile - start_percentile)))
+        except ZeroDivisionError:
+            colour_percent = 0
     else:  # Use Score
         colour_percent = max(0, min(1, (float(items[4]) - gradient_start) / (
                 gradient_end - gradient_start)))
