@@ -117,13 +117,15 @@ def numbered_naming(existing_name, new_name):  # TODO a bit strange but works fi
 
 def prepare_model(marker_set):
     bd = marker_set.bead_dict = {}  # TODO Doesnt need to be dict? (because loop through keys anyways)
-    #cpil= marker_set.chr_pos_index_list = []
     bead_id_split_pattern = re.compile(":|-")
     for m in all_atoms_in(marker_set):
         ea = getattr(m, 'marker_extra_attributes', {})
-        bead_info = bead_id_split_pattern.split(ea["beadID"])
-        # bead_info = re.split(":|-", ea["beadID"])
-        chr_info = ea["chrID"]
+        try:
+            bead_info = bead_id_split_pattern.split(ea["beadID"])
+
+            chr_info = ea["chrID"]
+        except KeyError:
+            continue  # This bead is not preparable so we skip it
         bead_start = int(bead_info[1])
         bead_end = int(bead_info[2])
         m.bead_start = bead_start
