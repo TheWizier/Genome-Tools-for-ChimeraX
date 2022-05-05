@@ -43,7 +43,7 @@
         <x>0</x>
         <y>0</y>
         <width>315</width>
-        <height>646</height>
+        <height>669</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -209,6 +209,19 @@
            <widget class="QRadioButton" name="radioColorColor">
             <property name="text">
              <string>Use colour from file</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">colourButtonGroup</string>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioRetainColor">
+            <property name="toolTip">
+             <string>Uses the colours from the main model on the new model.</string>
+            </property>
+            <property name="text">
+             <string>Retain colours</string>
             </property>
             <attribute name="buttonGroup">
              <string notr="true">colourButtonGroup</string>
@@ -898,7 +911,7 @@
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="colourButtonGroup"/>
   <buttongroup name="beadSelectionModeGroup"/>
+  <buttongroup name="colourButtonGroup"/>
  </buttongroups>
 </ui>

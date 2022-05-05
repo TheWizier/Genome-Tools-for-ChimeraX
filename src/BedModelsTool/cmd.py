@@ -206,7 +206,7 @@ def make_bed_model(new_model,
 
         # Handle multiple entries on a single bead:
         if (m in marker_seen):
-            if (colour_mode == BedColourMode.SINGLE):
+            if (colour_mode == BedColourMode.SINGLE or colour_mode == BedColourMode.RETAIN):
                 continue
 
             bead = marker_seen[m][0]
@@ -260,6 +260,9 @@ def make_bed_model(new_model,
         elif (colour_mode == BedColourMode.COLOUR):
             r, g, b = items[8].split(",")
             rgba = np.array([int(r), int(g), int(b), 255], dtype=np.ubyte)
+
+        elif (colour_mode == BedColourMode.RETAIN):
+            rgba = m.color
 
         else:
             print("Invalid colour mode")

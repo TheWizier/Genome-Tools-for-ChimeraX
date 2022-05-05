@@ -2,7 +2,7 @@ from enum import IntEnum
 
 
 class BedColourMode(IntEnum):
-    SINGLE, SCORE, COLOUR = range(3)
+    SINGLE, SCORE, COLOUR, RETAIN = range(4)
 
 
 class SelectMode(IntEnum):

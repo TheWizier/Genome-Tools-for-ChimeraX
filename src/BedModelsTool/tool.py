@@ -75,6 +75,7 @@ class BedModelsTool(ToolInstance):
         self.bf.colourButtonGroup.setId(self.bf.radioSingleColor, 0)
         self.bf.colourButtonGroup.setId(self.bf.radioScoreColor, 1)
         self.bf.colourButtonGroup.setId(self.bf.radioColorColor, 2)
+        self.bf.colourButtonGroup.setId(self.bf.radioRetainColor, 3)
 
         self.bf.beadSelectionModeGroup.setId(self.bf.radioInRange, 0)
         self.bf.beadSelectionModeGroup.setId(self.bf.radioInRangeStrict, 1)
