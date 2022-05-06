@@ -1,23 +1,25 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 <html>
-<head>
-    <title>Genome Selection</title>
-    <meta name="qrichtext" content="1" />
-    <style type="text/css">p, li { white-space: pre-wrap; }</style>
-</head>
-<body style=" font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:400; font-style:normal;">
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:14pt; font-weight:600;"><a href="../index.html#tools">Tool</a>: Genome Selection</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">This tool is for selecting beads on a model by using the actual chomosome base-pair ranges they represent.</span></p>
-<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;"><br /></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">The selection is added to any existing selection. Deselecting all can be done by Ctrl clicking in the scene or by using the command select clear.</span></p>
-<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;"><br /></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt; font-weight:600;">General Options</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">&quot;chrID&quot; is the chromosome ID of the chromosome to select from as it is in the .cmm file. If you are unsure of what your chromosome IDs are you can use the dump tool to inspect the chrID field of the beads.</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">&quot;From&quot; and &quot;To&quot; specifies the pase-pair range to select with the &quot;From&quot; value being inclusive and the &quot;To&quot; value being exclusive.</span></p>
-<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;"><br /></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">&quot;Model ID&quot; is the ID of the model to perform the selection on.</span></p>
-<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;"><br /></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt; font-weight:600;">Bead Selection Mode</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">The bead selection mode specifies how the beads are selected.</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt; color:#000000;">&quot;In range&quot; will select all beads that are within or partially within the specified range.</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt; color:#000000;">&quot;Strictly in range&quot; will only select beads that are entirely within the specified range.</span></p></body></html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../userdocs.css" />
+        <title>Overlap Tool</title>
+    </head>
+    <body>
+
+        <a name="top"></a>
+        <a href="../index.html">
+        <img width="60px" src="../ChimeraX-docs-icon.svg" alt="ChimeraX docs icon"
+             class="clRight" title="User Guide Index"/></a>
+
+        <h3><a href="../index.html#tools">Tool</a>: Genome Selection</h3>
+        <p>This tool is for selecting beads on a model by using the actual chomosome base-pair ranges they represent.</p>
+        <p>The selection is added to any existing selection. Deselecting all can be done by Ctrl clicking in the scene or by using the command select clear.</p>
+        <h4>General Options</h4>
+        <p>"chrID" is the chromosome ID of the chromosome to select from as it is in the .cmm file. If you are unsure of what your chromosome IDs are you can use the dump tool to inspect the chrID field of the beads.</p>
+        <p>"From" and "To" specifies the pase-pair range to select with the "From" value being inclusive and the "To" value being exclusive.</p>
+        <p>"Model ID" is the ID of the model to perform the selection on.</p>
+        <h4>Bead Selection Mode</h4>
+        <p>The bead selection mode specifies how the beads are selected.</p>
+        <p>"In range" will select all beads that are within or partially within the specified range.</p>
+        <p>"Strictly in range" will only select beads that are entirely within the specified range.</p>
+    </body>
+</html>

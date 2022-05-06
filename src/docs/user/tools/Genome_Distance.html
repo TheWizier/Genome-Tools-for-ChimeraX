@@ -1,25 +1,27 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 <html>
-<head>
-    <title>Genome Distance</title>
-    <meta name="qrichtext" content="1" />
-    <style type="text/css">p, li { white-space: pre-wrap; }</style>
-</head>
-<body style=" font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:400; font-style:normal;">
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:14pt; font-weight:600;"><a href="../index.html#tools">Tool</a>: Genome Distance</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">This tool is for measuring distances and has three ways of doing so:</span></p>
-<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;"><br /></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">&quot;Pairwise Distances&quot; will calculate all pairwise distances between beads within a model.</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">&quot;Distance Between Models&quot; will calculate all distances between the beads in the two models.</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">&quot;Distance from Point&quot; will calculate all distances from that point to all beads in the model.</span></p>
-<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;"><br /></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">The results are given as an array and can be saved as a .npy file.</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">A histogram is also generated from the results.</span></p>
-<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;"><br /></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt; font-weight:600;">Distance Options</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">Here one can choose what distance metric to use.</span></p>
-<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;"><br /></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt; font-weight:600;">Histogram Options</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">Here are options for the generated histogram.</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">&quot;Bins&quot; refer to the amount of bins to be used for the histogram.</span></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:12pt;">If &quot;Use cutoff&quot; is enabled, the the cutoff &quot;min&quot; and &quot;max&quot; values will be used to cut off values outside of that range when generating the histogram.</span></p></body></html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../userdocs.css" />
+        <title>Overlap Tool</title>
+    </head>
+    <body>
+
+        <a name="top"></a>
+        <a href="../index.html">
+        <img width="60px" src="../ChimeraX-docs-icon.svg" alt="ChimeraX docs icon"
+             class="clRight" title="User Guide Index"/></a>
+
+        <h3><a href="../index.html#tools">Tool</a>: Genome Distance</h3>
+        <p>This tool is for measuring distances and has three ways of doing so:</p>
+        <p>"Pairwise Distances" will calculate all pairwise distances between beads within a model.</p>
+        <p>"Distance Between Models" will calculate all distances between the beads in the two models.</p>
+        <p>"Distance from Point" will calculate all distances from that point to all beads in the model.</p>
+        <p>The results are given as an array and can be saved as a .npy file.</p>
+        <p>A histogram is also generated from the results.</p>
+        <h4>Distance Options</h4>
+        <p>Here one can choose what distance metric to use.</p>
+        <h4>Histogram Options</h4>
+        <p>Here are options for the generated histogram.</p>
+        <p>"Bins" refer to the amount of bins to be used for the histogram.</p>
+        <p>If "Use cutoff" is enabled, the the cutoff "min" and "max" values will be used to cut off values outside of that range when generating the histogram.</p>
+    </body>
+</html>
