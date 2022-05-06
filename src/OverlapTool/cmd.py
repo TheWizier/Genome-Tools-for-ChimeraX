@@ -11,9 +11,11 @@ def make_overlap_model(session, overlap_rules: List[OverlapRule], model_name: st
     # Make a list of all involved beads and what models they are in.
     all_involved_model_ids = set()
     for rule in overlap_rules:
+        # If rule is empty -> select all with first model as retainer
         if (len(rule.model_ids) == 0):
             for model in session.models.list():
                 all_involved_model_ids.add(model.id_string)
+            rule.retainer = session.models.list()[0].id_string
             break
         all_involved_model_ids.update(rule.model_ids)
     all_involved_beads = {}
@@ -23,28 +25,28 @@ def make_overlap_model(session, overlap_rules: List[OverlapRule], model_name: st
             raise UserError("Model id not found:" + model_id)
         for bead in all_atoms_in(cur_model):
             if(bead.residue.number not in all_involved_beads):
-                all_involved_beads[bead.residue.number] = (set(), bead)
-            all_involved_beads[bead.residue.number][0].add(model_id)
+                all_involved_beads[bead.residue.number] = {}
+            all_involved_beads[bead.residue.number][model_id] = bead
 
     # Go through list and make a bead for the first rule that applies to that list entry
     new_model = MarkerSet(session, name=model_name)
     for bead_id in all_involved_beads:
         for rule in overlap_rules:
-            if(rule.model_ids.issubset(all_involved_beads[bead_id][0])):
+            if(rule.model_ids.issubset(all_involved_beads[bead_id].keys())):
                 # Choose colour:
                 if(rule.colour_mode == OverlapColourMode.NOT_INCLUDE):
                     break
                 elif(rule.colour_mode == OverlapColourMode.RETAIN_COLOUR):
-                    colour = all_involved_beads[bead_id][1].color
+                    colour = all_involved_beads[bead_id][rule.retainer].color
                 elif(rule.colour_mode == OverlapColourMode.COLOUR):
                     colour = rule.colour.uint8x4()
                 else:
                     print("invalid colour mode")  # TODO Exception
                     break
 
-                new_model.create_marker(all_involved_beads[bead_id][1].scene_coord,
+                new_model.create_marker(all_involved_beads[bead_id][rule.retainer].scene_coord,
                                         colour,
-                                        all_involved_beads[bead_id][1].radius,
-                                        all_involved_beads[bead_id][1].residue.number)
+                                        all_involved_beads[bead_id][rule.retainer].radius,
+                                        all_involved_beads[bead_id][rule.retainer].residue.number)
                 break
     session.models.add([new_model])

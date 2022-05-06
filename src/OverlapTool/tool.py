@@ -54,9 +54,9 @@ class OverlapTool(ToolInstance):  # TODO maybe add help button for information o
             model_ids_string = rule.form.modelIDs.text()
             model_ids_items = re.split(", |,", model_ids_string.strip())
             if(len(model_ids_items) == 1 and model_ids_items[0] == ""):
-                model_ids = set()
+                model_ids = []
             else:
-                model_ids = set(model_ids_items)
+                model_ids = model_ids_items
 
             colour_mode = rule.form.action.currentIndex()
             colour = rule.form.colorPicker.get_color()
