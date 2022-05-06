@@ -57,12 +57,10 @@ class OverlapTool(ToolInstance):  # TODO maybe add help button for information o
                 model_ids = set()
             else:
                 model_ids = set(model_ids_items)
-            not_include = rule.form.action.currentIndex() == 1
-            if(not_include):
-                new_overlap_rule = OverlapRule(self.session, model_ids, not_include)
-            else:
-                colour = rule.form.colorPicker.get_color()
-                new_overlap_rule = OverlapRule(self.session, model_ids, not_include, colour)
+
+            colour_mode = rule.form.action.currentIndex()
+            colour = rule.form.colorPicker.get_color()
+            new_overlap_rule = OverlapRule(self.session, model_ids, colour_mode, colour)
             overlap_rules.append(new_overlap_rule)
 
         make_overlap_model(self.session, overlap_rules, self.bof.newModelName.text())

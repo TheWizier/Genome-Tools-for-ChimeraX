@@ -3,7 +3,7 @@ from typing import List
 from chimerax.core.errors import UserError
 from chimerax.markers import MarkerSet
 
-from .OverlapRule import OverlapRule
+from .OverlapRule import OverlapRule, OverlapColourMode
 from ..util import get_model_by_id, all_atoms_in
 
 
@@ -31,10 +31,19 @@ def make_overlap_model(session, overlap_rules: List[OverlapRule], model_name: st
     for bead_id in all_involved_beads:
         for rule in overlap_rules:
             if(rule.model_ids.issubset(all_involved_beads[bead_id][0])):
-                if(rule.not_include):
+                # Choose colour:
+                if(rule.colour_mode == OverlapColourMode.NOT_INCLUDE):
                     break
+                elif(rule.colour_mode == OverlapColourMode.RETAIN_COLOUR):
+                    colour = all_involved_beads[bead_id][1].color
+                elif(rule.colour_mode == OverlapColourMode.COLOUR):
+                    colour = rule.colour.uint8x4()
+                else:
+                    print("invalid colour mode")  # TODO Exception
+                    break
+
                 new_model.create_marker(all_involved_beads[bead_id][1].scene_coord,
-                                        rule.colour.uint8x4(),
+                                        colour,
                                         all_involved_beads[bead_id][1].radius,
                                         all_involved_beads[bead_id][1].residue.number)
                 break

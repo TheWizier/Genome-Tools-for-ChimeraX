@@ -19,7 +19,6 @@ class QColourRule(QWidget):
         self.form.upButton.clicked.connect(self.trigger_move_up_clicked)
         self.form.downButton.clicked.connect(self.trigger_move_down_clicked)
 
-
     def colour_active(self, index):
         if(index == 0):
             self.form.colorPicker.setEnabled(True)

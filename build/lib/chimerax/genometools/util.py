@@ -186,3 +186,9 @@ def copy_links(from_models_list, correspondence_dict):
 def show_info(session, help_file):
     from chimerax.core.commands import run
     run(session, f"help {help_file}")
+
+
+def model_id_from_model_name(session, model_name):
+    for model in session.models.list():
+        if (model.name == model_name):
+            return model.id_string

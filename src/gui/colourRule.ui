@@ -42,6 +42,11 @@
        <string>Don't include</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>Retain Colour</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item row="0" column="0">
