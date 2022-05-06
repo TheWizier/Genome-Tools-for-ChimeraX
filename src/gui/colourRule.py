@@ -68,7 +68,7 @@ class Ui_Form(object):
         Form.setWindowTitle(_translate("Form", "Form"))
         self.action.setItemText(0, _translate("Form", "Colour"))
         self.action.setItemText(1, _translate("Form", "Don\'t include"))
-        self.action.setItemText(2, _translate("Form", "Retain Colour"))
+        self.action.setItemText(2, _translate("Form", "Retain colours"))
         self.modelIDs.setToolTip(_translate("Form", "Comma separated model IDs or names in double quotes. Empty field will select all models."))
         self.removeRule.setToolTip(_translate("Form", "Remove rule"))
         self.removeRule.setText(_translate("Form", "-"))
