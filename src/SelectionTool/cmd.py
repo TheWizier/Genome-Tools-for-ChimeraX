@@ -1,8 +1,8 @@
 from chimerax.core.commands import CmdDesc, StringArg, IntArg
 
-from Genometools.src.BedModelsTool.cmd import bead_select
-from Genometools.src.enums import SelectMode
-from Genometools.src.util import get_model_by_id, prepare_model
+from ..BedModelsTool.cmd import bead_select
+from ..enums import SelectMode
+from ..util import get_model_by_id, prepare_model
 
 
 def select_beads(session, chr_id, from_val, to_val, model_id, select_mode=SelectMode.RANGE):

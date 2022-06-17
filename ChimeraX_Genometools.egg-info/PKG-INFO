@@ -53,6 +53,7 @@ Classifier: ChimeraX :: Tool :: Genome Distance ::
 Classifier: ChimeraX :: Tool :: Genome Selection ::
       Genome Tools :: Tool for selecting beads by chromosome position
 Requires-Python: >=3.7
+License-File: LICENSE
 
 Work in progress ChimeraX bundle.
 
