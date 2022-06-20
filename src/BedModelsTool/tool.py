@@ -1,8 +1,8 @@
 from os import path
 
-from PyQt5.QtCore import QRegularExpression
-from PyQt5.QtGui import QColor, QRegularExpressionValidator
-from PyQt5.QtWidgets import QStyle
+from Qt.QtCore import QRegularExpression
+from Qt.QtGui import QColor, QRegularExpressionValidator
+from Qt.QtWidgets import QStyle
 from chimerax.core.tools import ToolInstance
 
 from .cmd import visualise_bed

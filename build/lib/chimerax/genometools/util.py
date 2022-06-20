@@ -164,15 +164,20 @@ def copy_links(from_models_list, correspondence_dict):
     # Get all bonds(links) from the main model and its submodels
     models = []
     for from_model in from_models_list:
-        models.append(get_all_submodels(from_model))
+        models.extend(get_all_submodels(from_model))
         models.append(from_model)
 
     original_bonds = Bonds()
+    print(models)  # TODO DEBUG
     for model in models:
+        print("hepp")
         try:
             original_bonds = original_bonds.merge(model.bonds.unique())
+            print("succ")
         except AttributeError:
             pass
+
+    print(original_bonds)
 
     neighbours = original_bonds.atoms
 

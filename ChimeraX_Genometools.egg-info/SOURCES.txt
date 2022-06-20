@@ -7,7 +7,6 @@ ChimeraX_Genometools.egg-info/top_level.txt
 src/__init__.py
 src/cmd.py
 src/enums.py
-src/testing.py
 src/util.py
 src/BedModelsTool/__init__.py
 src/BedModelsTool/cmd.py

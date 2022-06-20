@@ -1,6 +1,6 @@
 from typing import List
 
-from PyQt5.QtWidgets import QStyle
+from Qt.QtWidgets import QStyle
 from chimerax.core.tools import ToolInstance
 
 from .cmd import make_overlap_model
